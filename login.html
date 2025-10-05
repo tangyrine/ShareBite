@@ -243,31 +243,8 @@
         <a href="register.html" class="register-link">Don't have an account? Register</a>
     </div>
 
+    <script src="js/theme.js"></script>
     <script>
-        // --- Theme Toggler ---
-        const themeToggle = document.getElementById('theme-toggle');
-        const body = document.body;
-
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme) {
-            body.classList.add(currentTheme);
-            if (currentTheme === 'dark-mode') {
-                themeToggle.innerHTML = '☀️';
-            }
-        }
-
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            let theme = 'light-mode';
-            if (body.classList.contains('dark-mode')) {
-                themeToggle.innerHTML = '☀️';
-                theme = 'dark-mode';
-            } else {
-                themeToggle.innerHTML = '🌙';
-            }
-            localStorage.setItem('theme', theme);
-        });
-
         // --- Form Submission ---
         const loginForm = document.getElementById('loginForm');
 
