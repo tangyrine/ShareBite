@@ -21,7 +21,25 @@ git clone https://github.com/<your-username>/ShareBite.git
 cd ShareBite
 ```
 
-### 3. Create a new branch
+### 3. 🎯 Create or Find an Issue
+
+**⚠️ IMPORTANT: Before starting work, you MUST create an issue and get it assigned to you!**
+
+#### Option A: Work on Existing Issues
+- Browse the [Issues tab](https://github.com/angelabera/ShareBite/issues)
+- Look for issues labeled `good first issue`, `help wanted`, or `hacktoberfest`
+- Comment on the issue saying **"I'd like to work on this"**
+- Wait for a maintainer to **assign** the issue to you
+
+#### Option B: Propose New Features/Fixes
+- Create a **new issue** describing what you want to work on
+- Use the appropriate template (bug report, feature request, etc.)
+- Wait for maintainer **approval** and **assignment**
+- Once approved and assigned, you can start working!
+
+> **💡 Why this step matters:** This prevents duplicate work and ensures your contribution aligns with project goals.
+
+### 4. Create a new branch
 
 Create a branch for your feature or fix:
 
@@ -34,7 +52,7 @@ git checkout -b feature-name
 git checkout -b add-food-listing-ui
 ```
 
-### 4. Make your changes
+### 5. Make your changes
 
 Here are some common contribution ideas:
 
@@ -47,29 +65,33 @@ Here are some common contribution ideas:
 - ⚡ **Optimize performance**
 - 🔒 **Add security features**
 
-### 5. Commit your changes
+### 6. Commit your changes
 ```bash
 git add .
 git commit -m "Added new feature: food listing form"
 ```
 
-### 6. Push to your fork
+### 7. Push to your fork
 ```bash
 git push origin feature-name
 ```
 
-### 7. Create a Pull Request (PR)
+### 8. Create a Pull Request (PR)
 
 1. Go to your fork on GitHub
 2. Click **Compare & Pull Request**
-3. Add a clear title and short description of what you've done
-4. Submit your PR 🚀
+3. **Reference the issue** in your PR description (e.g., "Closes #123")
+4. Add a clear title and short description of what you've done
+5. Submit your PR 🚀
+
+> **📝 Note:** Your PR will only be reviewed if it's linked to an assigned issue!
 
 ## 📌 Contribution Rules
 
 Please follow these simple rules to keep contributions clean and helpful:
 
 ### ✅ Do's
+- **Create an issue** and **get it assigned** before starting work
 - Keep your code **clean**, **well-commented**, and **readable**
 - Use **meaningful commit messages**
 - **One PR = one feature** or fix
@@ -78,12 +100,15 @@ Please follow these simple rules to keep contributions clean and helpful:
 - Be **respectful** and **helpful** to others
 - Include **screenshots** for UI changes
 - Update **documentation** when needed
+- **Reference the issue** in your PR (e.g., "Fixes #123")
 
 ### ❌ Don'ts
+- **Don't start work** without an assigned issue
 - No **spammy** or **irrelevant** PRs — they'll be marked invalid
 - Don't break **existing functionality**
 - Don't submit **incomplete** features
 - Avoid **duplicate** PRs for the same issue
+- Don't submit **PRs without issue reference**
 
 ## 🔰 Good First Issues
 
