@@ -682,7 +682,7 @@ handleFileSelect(file) {
                 foodType: "Fruit & Vegetable Box",
                 quantity: "1 large box",
                 category: "restaurant",
-                description: "Fresh produce that won't be used before expiry. Includes apples, oranges, carrots, and lettuce.",
+                description: "Fresh produce includes apples, oranges, carrots, and lettuce.",
                 freshUntil: this.getRandomFutureDate(),
                 pickupTime: "17:00",
                 location: "Green Garden Restaurant",
