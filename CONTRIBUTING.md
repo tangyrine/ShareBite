@@ -227,13 +227,6 @@ Want to contribute but not sure where to start? Check out our roadmap:
 4. **Testing** framework setup
 5. **Documentation** expansion
 
-## 📞 Contact
-
-- 📧 **Email**: [Create an issue for questions]
-- 🐛 **Bug Reports**: Use GitHub Issues
-- 💡 **Feature Requests**: Use GitHub Issues with `enhancement` label
-- 💬 **Discussions**: GitHub Discussions (if enabled)
-
 ---
 
 **Let's code for a cause — and make the world a little kinder, one meal at a time** 🌏💚
