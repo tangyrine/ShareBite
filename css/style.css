@@ -298,10 +298,14 @@ body {
 .hero-stats {
     display: flex;
     gap: 2rem;
+    transform: none !important;
+    animation: none !important;
 }
 
 .stat {
     text-align: center;
+    transform: none !important;
+    animation: none !important;
 }
 
 .stat-number {
@@ -309,6 +313,9 @@ body {
     font-size: 2rem;
     font-weight: 700;
     color: var(--accent-color);
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
 }
 
 .stat-label {
@@ -2126,26 +2133,25 @@ html, body, .feature-card, .food-card, .navbar, .modal-content, .footer, .stats-
 }
 
 .stat-number {
-    display: inline-block;
-    animation: bounceNumbers 2s ease-in-out infinite;
+    display: block;
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
 }
 
 .stat:nth-child(1) .stat-number {
-    animation-delay: 0s;
+    animation: none !important;
 }
 
 .stat:nth-child(2) .stat-number {
-    animation-delay: 0.3s;
+    animation: none !important;
 }
 
 .stat:nth-child(3) .stat-number {
-    animation-delay: 0.6s;
+    animation: none !important;
 }
 
-@keyframes bounceNumbers {
-    0%, 80%, 100% { transform: translateY(0) scale(1); }
-    40% { transform: translateY(-10px) scale(1.1); }
-}
+/* Removed bounceNumbers keyframe to prevent any bouncing */
 
 .feature-icon {
     animation: iconGlow 2s ease-in-out infinite;
@@ -2274,4 +2280,32 @@ html, body, .feature-card, .food-card, .navbar, .modal-content, .footer, .stats-
 @keyframes socialDance {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
+}
+
+/* NUCLEAR OVERRIDE - ABSOLUTELY NO BOUNCING FOR STATS */
+.hero-stats,
+.hero-stats *,
+.hero-stats .stat,
+.hero-stats .stat-number,
+.stat-number,
+.hero-stats .stat .stat-number {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+    -webkit-animation: none !important;
+    -webkit-transform: none !important;
+    -webkit-transition: none !important;
+    position: static !important;
+    will-change: auto !important;
+    backface-visibility: visible !important;
+}
+
+.hero-stats .stat-number,
+.stat-number {
+    display: block !important;
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    color: var(--accent-color) !important;
+    animation: none !important;
+    transform: translateZ(0) !important; /* Force GPU layer but no movement */
 }

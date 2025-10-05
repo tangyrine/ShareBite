@@ -542,47 +542,35 @@ handleFileSelect(file) {
     }
 
     setupStatsAnimation() {
+        // FINAL APPROACH - NO ANIMATION AT ALL, JUST SET FINAL VALUES
         const stats = document.querySelectorAll('.stat-number');
-        let animated = false;
         
-        const animateStats = () => {
-            if (animated) return;
+        stats.forEach(stat => {
+            const target = parseInt(stat.getAttribute('data-count'));
             
-            stats.forEach(stat => {
-                const target = parseInt(stat.getAttribute('data-count'));
-                const duration = 2000;
-                const increment = target / (duration / 16);
-                let current = 0;
-                
-                const updateStat = () => {
-                    current += increment;
-                    if (current < target) {
-                        stat.textContent = Math.floor(current);
-                        requestAnimationFrame(updateStat);
-                    } else {
-                        stat.textContent = target;
-                    }
-                };
-                
-                updateStat();
-            });
+            // Kill ALL possible animations and effects
+            stat.style.cssText = `
+                display: block !important;
+                font-size: 2rem !important;
+                font-weight: 700 !important;
+                color: #FFC107 !important;
+                animation: none !important;
+                transform: none !important;
+                transition: none !important;
+                -webkit-animation: none !important;
+                -webkit-transform: none !important;
+                -webkit-transition: none !important;
+                position: static !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                background: transparent !important;
+                will-change: auto !important;
+            `;
             
-            animated = true;
-        };
-        
-        // Trigger animation when hero section is in view
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    setTimeout(animateStats, 1000);
-                }
-            });
+            // Just set the final number immediately - NO COUNTING
+            stat.textContent = target;
         });
-        
-        const heroStats = document.querySelector('.hero-stats');
-        if (heroStats) {
-            observer.observe(heroStats);
-        }
     }
 
     setupScrollEffects() {
@@ -682,7 +670,7 @@ handleFileSelect(file) {
                 foodType: "Fruit & Vegetable Box",
                 quantity: "1 large box",
                 category: "restaurant",
-                description: "Fresh produce includes apples, oranges, carrots, and lettuce.",
+                description: "Fresh produce that includes apples, oranges, carrots, and lettuce.",
                 freshUntil: this.getRandomFutureDate(),
                 pickupTime: "17:00",
                 location: "Green Garden Restaurant",
