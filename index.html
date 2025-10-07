@@ -25,7 +25,7 @@
                 <li><a href="#features" class="nav-link">Features</a></li>
                 <li><a href="foodlisting.html" class="nav-link">Listings</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
+                <li><a href="#contact-section" class="nav-link">Contact</a></li>
             </ul>
             <div class="user-actions">
                 <!-- Added dark mode toggle -->
@@ -402,6 +402,44 @@
       </div>
     </section>
 
+    <!--Contact Section-->
+  <section id="contact-section" class="contact">
+  <h2 class="contact-title">📩 Contact Us</h2>
+  <form id="contact-form">
+    <div>
+      <label for="contact-name">Name</label>
+      <input type="text" id="contact-name" />
+      <label for="contact-email">Email</label>
+      <input type="text" id="contact-email" />
+      <label for="contact-msg">Message</label>
+      <input type="text" id="contact-msg" />
+      <button type="submit">Send</button>
+    </div>
+  </form>
+</section>
+
+<script>
+  const form = document.getElementById("contact-form");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault(); // Prevent form from submitting
+
+    const name = document.getElementById("contact-name").value;
+    const email = document.getElementById("contact-email").value;
+    const message = document.getElementById("contact-msg").value;
+
+    if (!name || !email || !message) {
+      alert("Please fill out all fields before submitting.");
+      return;
+    }
+
+    alert(`Thank you, ${name}! Your message has been sent.`);
+    
+    // Optional: Clear the form after submission
+    form.reset();
+  });
+</script>
+
     <!-- Footer -->
     <footer class="footer">
       <div class="container">
@@ -473,5 +511,6 @@
 
     <script src="js/theme.js"></script>
     <script src="js/script.js"></script>
+   
   </body>
 </html>

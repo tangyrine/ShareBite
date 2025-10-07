@@ -2369,3 +2369,108 @@ html, body, .feature-card, .food-card, .navbar, .modal-content, .footer, .stats-
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
 }
+
+
+
+
+/* ..................................................................................... */
+
+.contact {
+    padding: var(--section-padding);
+    background: var(--light-gray);
+    text-align: center;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Title Styling */
+.contact-title {
+    font-size: var(--h2-size, 2rem);
+    color: var(--black);
+    margin-bottom: 2rem;
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text; 
+    background-clip: text;        
+    -webkit-text-fill-color: transparent;
+    color: transparent; 
+    transition: color 0.3s ease;
+}
+
+.contact form {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 2rem 3rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow-heavy);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact form div {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.contact label {
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    text-align: left;
+    transition: color 0.3s ease;
+}
+
+.contact input[type="text"] {
+    padding: 0.8rem 1rem;
+    border-radius: 0.6rem;
+    border: 1.5px solid var(--medium-gray);
+    font-size: 1rem;
+    color: var(--black);
+    background: var(--light-gray);
+    transition: 0.3s ease;
+}
+
+.contact input[type="text"]:focus {
+    border-color: var(--primary-color);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(0, 128, 255, 0.15);
+    outline: none;
+}
+
+.contact button {
+    background: var(--primary-gradient);
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0.9rem 0;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-heavy);
+}
+
+.contact button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.contact button:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 768px) {
+    .contact form {
+        padding: 1.5rem;
+    }
+
+    .contact-title {
+        font-size: 1.7rem;
+    }
+}
