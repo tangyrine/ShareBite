@@ -213,7 +213,7 @@
     <div class="auth-container">
         <h1>Create Your ShareBite Account</h1>
         <p class="subtitle">Join our mission to reduce food waste and feed communities.</p>
-        <form id="registerForm">
+        <form id="registerForm" action="/signup" method="POST">
             <div class="form-group">
                 <label for="name">Full Name</label>
                 <input type="text" id="name" name="name" placeholder="Enter your full name" required>
@@ -240,26 +240,45 @@
     </div>
 
     <script src="js/theme.js"></script>
-    <script>
-        // --- Form Submission ---
-        const registerForm = document.getElementById('registerForm');
+<script>
+    // --- Form Submission ---
+    const registerForm = document.getElementById('registerForm');
 
-        registerForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+    registerForm.addEventListener('submit', async(e) => {
+         e.preventDefault();
 
-            // Get form values
-            const fullName = registerForm.name.value;
-            const email = registerForm.email.value;
-            const password = registerForm.password.value;
-            const role = registerForm.role.value;
+        // Get form values
+        const name = registerForm.name.value.trim();
+        const email = registerForm.email.value.trim();
+        const password = registerForm.password.value.trim();
+        const role = registerForm.role.value;
 
-            console.log('Registering user:', { fullName, email, role });
+        if (!name || !email || !password || !role) {
+            alert("Please fill in all fields before registering.");
+            return;
+        }
 
-            // TODO: Connect to auth.js for Firebase or backend registration
-            
-            alert('Registration form submitted! (See console for details)');
+        try {
+        const response = await fetch("http://localhost:3000/signup", { 
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password, role })
         });
-    </script>
+
+        if (response.ok) {
+            alert("Registered successfully!");
+            window.location.href = "index.html"; 
+        } else {
+            alert("Registration failed!");
+        }
+    } catch (error) {
+        console.log(error);
+        alert("Error connecting to server");
+    }
+
+    });
+</script>
+
 
 </body>
 </html>

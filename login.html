@@ -226,7 +226,7 @@
     <div class="auth-container">
         <h1>Welcome Back to ShareBite</h1>
         <p class="subtitle">Log in to continue your journey with us.</p>
-        <form id="loginForm">
+        <form id="loginForm" action="/login" method="POST">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" required>
@@ -248,19 +248,44 @@
         // --- Form Submission ---
         const loginForm = document.getElementById('loginForm');
 
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+loginForm.addEventListener('submit', async(e) => {
+    e.preventDefault();
 
-            // Get form values
-            const email = loginForm.email.value;
-            const password = loginForm.password.value;
+    const email = loginForm.email.value;
+    const password = loginForm.password.value;
 
-            console.log('Logging in user:', { email });
+    if (!email || !password) {
+        alert("Please fill in all fields before logging.");
+        return;
+    }
 
-            // TODO: Connect to auth.js for Firebase or backend login
-
-            alert('Login form submitted! (See console for details)');
+    try {
+        const res = await fetch("http://localhost:3000/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify({ email, password }),
         });
+
+        if (!res.ok) {
+            const data = await res.json();
+            alert("Login failed: " + (data.message || "Unknown error"));
+            return;
+        }
+
+        const data = await res.json();
+        
+        sessionStorage.setItem('userRole', data.role);
+        sessionStorage.setItem('userName', data.name);
+        
+        alert("Login successful!");
+        window.location.href = "http://localhost:3000/";
+        
+    } catch (err) {
+        console.error("Error:", err);
+        alert("Error connecting to server. Make sure the server is running on port 3000.");
+    }
+});
     </script>
 
 </body>
