@@ -28,7 +28,7 @@
     --hero-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     
     /* Typography */
-   --font-family: 'Inter', sans-serif;
+    --font-family: 'Inter', sans-serif;
     --h1-size: 3.5rem;
     --h2-size: 2.5rem;
     --h3-size: 1.8rem;
@@ -93,6 +93,16 @@ body {
     font-weight: 700;
     color: var(--primary-color);
     gap: 0.5rem;
+}
+
+.nav-logo-link{
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.nav-logo-link:hover{
+    opacity: 0.85;
 }
 
 .nav-logo i {
