@@ -2916,7 +2916,45 @@ body.dark-mode .notification-bell:hover {
   .contact-container {
     flex-direction: column;
   }
-  
+}
+
+
+/* ===== Scroll to Top Button ===== */
+#scrollToTopBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 99;
+  width: 45px;
+  height: 45px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  outline: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+/* Show state (added by JS) */
+#scrollToTopBtn.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Hover animation */
+#scrollToTopBtn:hover {
+  background-color: #45a049;
+  transform: scale(1.1);
+}
+
+
   .section-divider {
     padding: 2rem 0;
     margin: 1rem 0;
@@ -2933,3 +2971,4 @@ body.dark-mode .notification-bell:hover {
     font-size: 1.2rem;
   }
 }
+
