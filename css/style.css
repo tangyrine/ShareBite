@@ -2633,14 +2633,25 @@ body.dark-mode .divider-icon {
     transition: all 0.3s ease;
     color: var(--dark-gray);
     background: transparent;
+    display: inline-block;
     border: none;
-    font-size: 1.2rem;
+    font-size: 20px;
+    margin-left: 15px;
 }
-
+.notification-bell i{
+    font-size : 20px;
+    color: #00ff99;
+    transition: tranform 0.2s ease, color 0.2s ease;
+}
 .notification-bell:hover {
     background: rgba(76, 175, 80, 0.1);
     color: var(--primary-color);
     transform: scale(1.1);
+}
+.notification-bell:hover i{
+    transform: scale(1.2);
+    color: #00ffaa;
+
 }
 
 .notification-bell.active {
@@ -2650,19 +2661,18 @@ body.dark-mode .divider-icon {
 
 .notification-badge {
     position: absolute;
-    top: -5px;
+    top: -2px;
     right: -5px;
-    background: var(--secondary-color);
+    background color: red;
     color: white;
     border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    font-weight: 600;
-    animation: pulse 2s infinite;
+    width: 10px;
+    height: 10px;
+    border: 2px solid #1e1e1e;
+    box-shadow: 0 0 5px rgba(255,0,0,0.5);
+    display: block;
+    
+
 }
 
 .notification-panel {
