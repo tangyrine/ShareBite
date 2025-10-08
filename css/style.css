@@ -753,7 +753,6 @@ body {
     align-items: center;
     gap: 0.5rem;
     text-decoration: none;
-    box-shadow: var(--shadow-medium);
 }
 
 .learn-more-btn:hover {
