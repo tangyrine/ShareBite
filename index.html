@@ -7,7 +7,7 @@
     <meta name="sharebite-build" content="v-darkmode-fix-1">
     <link rel="stylesheet" href="css/style.css?v=darkmode-fix-1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/svg+xml" href="logo/logo.svg">
   </head>
   <body>
@@ -39,19 +39,8 @@
                     <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
                     <div class="notification-panel" id="notificationPanel">
                         <div class="notification-header">Claimed Food Items</div>
-                        <div class="notification-content">
-                          <div class="notification-item">
-                            <div class="notification-item-header">
-                              <div class="notification-item-icon">
-                                <i class =" fas fa-info"></i>
-                              </div>
-                              <div class="notification-detail">
-                                <i class ="fas fa-clock"></i>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      
+                        <div id="notificationList">
+                             <div class="no-notifications">No claimed items yet</div>
                         </div>
                     </div>
                 </div>
@@ -602,15 +591,6 @@
 
     <script src="js/theme.js"></script>
     <script src="js/script.js"></script>
-    <script>
-      const notificationBell = document.getElementById('notificationBell');
-      const notificationPanel = document.getElementById('notificationPanel');
-  
-    bell.addEventListener("click", () => {
-      panel.classList.toggle("active");
-    });
-
-    </script>
    
   </body>
 </html>

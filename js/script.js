@@ -1045,15 +1045,47 @@ handleFileSelect(file) {
         }, 1500); // Show loading for 1.5 seconds
     }
 
-    // Notification System Methods//
-const notificationBell = document.getElementById('notificationBell');
-const notificationPanel = document.getElementById('notificationPanel');
-
-bell.addEventListener("click", () => {
-    panel.style.display=
-    panel.style.display==="block"? "none" : "block";
-});
- loadClaimedItems() {
+    // Notification System Methods
+    setupNotificationSystem() {
+        const notificationBell = document.getElementById('notificationBell');
+        const notificationPanel = document.getElementById('notificationPanel');
+        
+        if (!notificationBell) return;
+        
+        // Show notification bell when in collector mode or when there are notifications
+        if (this.currentRole === 'collector' || this.notifications.length > 0) {
+            notificationBell.style.display = 'block';
+        }
+        
+        // Toggle notification panel
+        notificationBell.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isActive = notificationPanel.classList.contains('active');
+            
+            if (isActive) {
+                notificationPanel.classList.remove('active');
+                notificationBell.classList.remove('active');
+            } else {
+                notificationPanel.classList.add('active');
+                notificationBell.classList.add('active');
+            }
+        });
+        
+        // Close panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!notificationBell.contains(e.target)) {
+                notificationPanel.classList.remove('active');
+                notificationBell.classList.remove('active');
+            }
+        });
+        
+        // Prevent panel from closing when clicking inside
+        notificationPanel.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+    
+    loadClaimedItems() {
         const stored = localStorage.getItem('sharebite-claimed-items');
         return stored ? JSON.parse(stored) : [];
     }

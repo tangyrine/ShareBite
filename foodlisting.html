@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,11 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ShareBite - Food Listing</title>
     <meta name="sharebite-build" content="v-darkmode-fix-1">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=darkmode-fix-1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />>
-     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/svg+xml" href="logo/logo.svg">
 </head>
 
@@ -38,16 +36,16 @@
                 </button>
                 
                 <!-- Notification Bell -->
-                <div class="notification-bell" 
-                class ="notification-bell">
-              <i class ="fa-solid fa-bell"
-              style =" font-size : 20px; color:#00ff99;"></i>
-              <span id =" notificationBadge"
-              class="notification-badge"></span>
-              <div id="notificationPanel"
-              class ="notification-panel">
-            </div>
-              </div>
+                <div class="notification-bell" id="notificationBell" style="display: none;">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    <div class="notification-panel" id="notificationPanel">
+                        <div class="notification-header">Claimed Food Items</div>
+                        <div id="notificationList">
+                             <div class="no-notifications">No claimed items yet</div>
+                        </div>
+                    </div>
+                </div>
 
                 <button class="role-switch" id="roleSwitch">
                     <i class="fas fa-exchange-alt"></i>
@@ -258,7 +256,6 @@
         <p>Loading ShareBite...</p>
       </div>
     </div>
-    <script src ="script.js"></script>
 
     <script src="js/theme.js"></script>
     <script src="js/foodlisting.js"></script>
