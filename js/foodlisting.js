@@ -254,9 +254,42 @@ validateCurrentStep() {
             this.showToast(`Please fill in the required field: ${input.previousElementSibling.textContent}`, 'error');
             return false;
         }
+        
+        // Special validation for contact information
+        if (input.id === 'contact') {
+            if (!this.validateContactInfo(input.value.trim())) {
+                input.focus();
+                this.showToast('Please enter a valid email address or phone number', 'error');
+                return false;
+            }
+        }
     }
     
     return true;
+}
+
+// Validate contact information (email or phone number)
+validateContactInfo(contact) {
+    // Email regex pattern
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    // Phone number regex pattern (supports various formats)
+    const phonePattern = /^[\+]?[1-9]?[\d\s\-\(\)]{7,15}$/;
+    
+    // Remove spaces and common characters for phone validation
+    const cleanedContact = contact.replace(/[\s\-\(\)]/g, '');
+    
+    // Check if it's a valid email
+    if (emailPattern.test(contact)) {
+        return true;
+    }
+    
+    // Check if it's a valid phone number
+    if (phonePattern.test(contact) && cleanedContact.length >= 7 && cleanedContact.length <= 15) {
+        return true;
+    }
+    
+    return false;
 }
 
 resetFormSteps() {
@@ -403,6 +436,12 @@ handleFileSelect(file) {
         const freshDate = new Date(data.freshUntil);
         if (freshDate <= new Date()) {
             this.showErrorMessage('Fresh until date must be in the future.');
+            return false;
+        }
+        
+        // Validate contact information
+        if (!this.validateContactInfo(data.contact)) {
+            this.showErrorMessage('Please enter a valid email address or phone number for contact information.');
             return false;
         }
         
