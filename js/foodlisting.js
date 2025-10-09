@@ -1,170 +1,17 @@
 // ShareBite JavaScript - Interactive Food Waste Reduction Platform
 
-class ShareBite {
+class ShareBiteFoodListing {
     constructor() {
         this.currentRole = 'donor';
         this.foodListings = [];
         this.filteredListings = [];
         this.currentFilter = 'all';
-        this.isAuthenticated = false;
-        this.userData = null;
         this.claimedItems = this.loadClaimedItems();
         this.notifications = this.loadNotifications();
         
-        this.initAuth();
-    }
-
-    async initAuth() {
-        await this.checkAuthentication();
-        this.updateUIForAuthentication(); 
         this.init();
-        this.initTheme();
+        this.initTheme(); // add theme initialization after base init
     }
-
-    async checkAuthentication() {
-    try {
-        console.log('=== Checking authentication ===');
-        const res = await fetch('http://localhost:3000/api/current-user', {
-            credentials: 'include'
-        });
-        
-        console.log('Response status:', res.status);
-        
-        if (res.ok) {
-            this.userData = await res.json();
-            this.isAuthenticated = true;
-            this.currentRole = this.userData.role;
-            console.log('✓ User authenticated:', this.userData);
-        } else {
-            this.isAuthenticated = false;
-            this.userData = null;
-            this.currentRole = 'donor';
-            console.log('✗ User not authenticated');
-        }
-    } catch (err) {
-        console.error('Auth check error:', err);
-        this.isAuthenticated = false;
-        this.userData = null;
-        this.currentRole = 'donor';
-    }
-}
-    updateUIForAuthentication() {
-    const roleDisplay = document.getElementById('currentRole');
-    const roleSwitch = document.getElementById('roleSwitch');
-    let loginBtn = document.querySelector('.login-btn'); 
-    
-    console.log('Updating UI. Authenticated:', this.isAuthenticated, 'User:', this.userData);
-    
-    if (this.isAuthenticated && this.userData) {
-        
-        if (roleDisplay) {
-            roleDisplay.textContent = this.capitalizeFirst(this.userData.role);
-        }
-        
-
-        if (roleSwitch) {
-            roleSwitch.style.cursor = 'not-allowed';
-            roleSwitch.style.opacity = '0.7';
-            roleSwitch.title = 'Role is set based on your account';
-            
-            
-            const newRoleSwitch = roleSwitch.cloneNode(true);
-            roleSwitch.parentNode.replaceChild(newRoleSwitch, roleSwitch);
-            
-           
-            newRoleSwitch.classList.add('disabled');
-        }
-        
-        
-        if (loginBtn) {
-            console.log('Changing button to Logout');
-            
-            
-            const newLoginBtn = loginBtn.cloneNode(true);
-            newLoginBtn.textContent = 'Logout';
-            newLoginBtn.removeAttribute('onclick');
-            loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
-            
-            loginBtn = document.querySelector('.login-btn');
-            
-            if (loginBtn) {
-                loginBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    console.log('Logout clicked');
-                    this.handleLogout();
-                });
-            }
-        }
-        
-        this.updateUIForRole();
-    } else {
-        console.log('User not authenticated - showing Login button');
-        
-        if (roleDisplay) {
-            roleDisplay.textContent = 'Donor';
-        }
-        
-        
-        if (loginBtn) {
-            console.log('Changing button to Login');
-            
-            
-            const newLoginBtn = loginBtn.cloneNode(true);
-            newLoginBtn.textContent = 'Login';
-            newLoginBtn.removeAttribute('onclick');
-            loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
-            
-            
-            loginBtn = document.querySelector('.login-btn');
-            
-           
-            if (loginBtn) {
-                loginBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.location.href = 'login.html';
-                });
-            }
-        }
-        
-        if (roleSwitch) {
-            roleSwitch.style.cursor = 'pointer';
-            roleSwitch.style.opacity = '1';
-            roleSwitch.classList.remove('disabled');
-        }
-    }
-}
-
-    async handleLogout() {
-    try {
-        const res = await fetch('http://localhost:3000/logout', {
-            method: 'GET',
-            credentials: 'include'
-        });
-        
-        if (res.ok) {
-            this.isAuthenticated = false;
-            this.userData = null;
-            this.currentRole = 'donor';
-            
-            this.showToast('Logged out successfully', 'success');
-            
-            setTimeout(async () => {
-                if ('caches' in window) {
-                    const keys = await caches.keys();
-                    await Promise.all(keys.map(k => caches.delete(k)));
-                    console.log('[ShareBite] All caches cleared on logout');
-                }
-                
-                window.location.href = 'http://localhost:3000/';
-            }, 1000);
-        } else {
-            throw new Error('Logout failed');
-        }
-    } catch (err) {
-        console.error('Logout error:', err);
-        this.showToast('Error logging out', 'error');
-    }
-}
 
     init() {
         this.setupEventListeners();
@@ -211,10 +58,8 @@ class ShareBite {
         // Navigation
         this.setupNavigation();
         
-        // Role switching (only if not authenticated)
-        if (!this.isAuthenticated) {
-            this.setupRoleSwitch();
-        }
+        // Role switching
+        this.setupRoleSwitch();
         
         // Modal functionality
         this.setupModal();
@@ -225,14 +70,8 @@ class ShareBite {
         // Filtering and search
         this.setupFilteringAndSearch();
         
-        // Smooth scrolling
-        this.setupSmoothScrolling();
-        
         // Responsive navigation
         this.setupResponsiveNav();
-        
-        // Hero button interactions
-        this.setupHeroButtons();
         
         // Statistics counter animation
         this.setupStatsAnimation();
@@ -246,13 +85,19 @@ class ShareBite {
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 const href = link.getAttribute('href');
-                // Ignore .html links
-                if (href && href.endsWith('.html')) return;
-                e.preventDefault();
-                const targetId = href.substring(1);
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                // If it's an anchor for current page, scroll smoothly
+                if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    const targetId = href.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                } else if (href && href.includes('.html#')) {
+                    // If it's index.html#features or similar, navigate normally
+                    // (let browser handle navigation)
+                } else if (href && href.endsWith('.html')) {
+                    // If it's a plain .html link, let browser handle navigation
                 }
             });
         });
@@ -262,17 +107,9 @@ class ShareBite {
         const roleSwitch = document.getElementById('roleSwitch');
         const currentRoleSpan = document.getElementById('currentRole');
         
-        if (!roleSwitch) return;
-        
         roleSwitch.addEventListener('click', () => {
-            // Only allow switching if not authenticated
-            if (this.isAuthenticated) {
-                this.showToast('Role is fixed based on your account', 'error');
-                return;
-            }
-            
             this.currentRole = this.currentRole === 'donor' ? 'collector' : 'donor';
-            currentRoleSpan.textContent = this.capitalizeFirst(this.currentRole);
+            currentRoleSpan.textContent = this.currentRole.charAt(0).toUpperCase() + this.currentRole.slice(1);
             
             // Update UI based on role
             this.updateUIForRole();
@@ -286,18 +123,18 @@ class ShareBite {
         const notificationBell = document.getElementById('notificationBell');
         
         if (this.currentRole === 'collector') {
-            donateBtn.innerHTML = '<i class="fas fa-search"></i> Find Food';
-            findBtn.innerHTML = '<i class="fas fa-heart"></i> Help Others';
-            addListingBtn.style.display = 'none';
+            if (donateBtn) donateBtn.innerHTML = '<i class="fas fa-search"></i> Find Food';
+            if (findBtn) findBtn.innerHTML = '<i class="fas fa-heart"></i> Help Others';
+            if (addListingBtn) addListingBtn.style.display = 'none';
             
             // Show notification bell for collectors
             if (notificationBell) {
                 notificationBell.style.display = 'block';
             }
         } else {
-            donateBtn.innerHTML = '<i class="fas fa-heart"></i> Donate Food';
-            findBtn.innerHTML = '<i class="fas fa-search"></i> Find Food';
-            addListingBtn.style.display = 'flex';
+            if (donateBtn) donateBtn.innerHTML = '<i class="fas fa-heart"></i> Donate Food';
+            if (findBtn) findBtn.innerHTML = '<i class="fas fa-search"></i> Find Food';
+            if (addListingBtn) addListingBtn.style.display = 'flex';
             
             // Hide notification bell for donors (unless they have notifications)
             if (notificationBell && this.notifications.length === 0) {
@@ -309,235 +146,221 @@ class ShareBite {
         this.renderFoodListings();
     }
 
-    setupModal() {
-        const modal = document.getElementById('addListingModal');
-        const addListingBtn = document.getElementById('addListingBtn');
-        const closeModalBtn = document.querySelector('.close-modal');
-        const cancelBtn = document.getElementById('cancelForm');
+   setupModal() {
+    const modal = document.getElementById('addListingModal');
+    const addListingBtn = document.getElementById('addListingBtn');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const cancelBtn = document.getElementById('cancelForm');
 
-        this.currentStep = 1;
-        this.totalSteps = 3;
+    this.currentStep = 1;
+    this.totalSteps = 3;
 
-        if (addListingBtn) {
-            addListingBtn.addEventListener('click', () => {
-                // Check authentication before opening modal
-                if (!this.isAuthenticated) {
-                    this.showToast('Please login to add a listing', 'error');
-                    setTimeout(() => {
-                        window.location.href = '/login.html';
-                    }, 1500);
-                    return;
-                }
-                
-                // Check if user is a donor
-                if (this.currentRole !== 'donor') {
-                    this.showToast('Only donors can add listings', 'error');
-                    return;
-                }
-                
-                modal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-                this.resetFormSteps();
-            });
+    addListingBtn.addEventListener('click', () => {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        this.resetFormSteps();
+    });
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        this.resetForm();
+        this.resetFormSteps();
+    };
+
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
         }
+    });
 
-        const closeModal = () => {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            this.resetForm();
-            this.resetFormSteps();
-        };
+    this.setupFileUpload();
+    this.setupFormNavigation();
+}
 
-        if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
-        if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+setupFormNavigation() {
+    const nextBtn = document.getElementById('nextStep');
+    const prevBtn = document.getElementById('prevStep');
+    const submitBtn = document.getElementById('submitForm');
+
+    nextBtn.addEventListener('click', () => {
+        if (this.validateCurrentStep()) {
+            this.goToStep(this.currentStep + 1);
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        this.goToStep(this.currentStep - 1);
+    });
+}
+
+goToStep(stepNumber) {
+    if (stepNumber < 1 || stepNumber > this.totalSteps) return;
+
+    document.querySelectorAll('.form-step').forEach(step => {
+        step.classList.remove('active');
+    });
+
+    const newStep = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
+    if (newStep) {
+        newStep.classList.add('active');
+    }
+
+    this.updateProgress(stepNumber);
+
+    this.updateNavigationButtons(stepNumber);
+
+    this.currentStep = stepNumber;
+}
+
+updateProgress(stepNumber) {
+    const steps = document.querySelectorAll('.progress-step');
+    
+    steps.forEach((step, index) => {
+        const stepNum = index + 1;
         
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-
-        this.setupFileUpload();
-        this.setupFormNavigation();
-    }
-
-    setupFormNavigation() {
-        const nextBtn = document.getElementById('nextStep');
-        const prevBtn = document.getElementById('prevStep');
-        const submitBtn = document.getElementById('submitForm');
-
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                if (this.validateCurrentStep()) {
-                    this.goToStep(this.currentStep + 1);
-                }
-            });
-        }
-
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
-                this.goToStep(this.currentStep - 1);
-            });
-        }
-    }
-
-    goToStep(stepNumber) {
-        if (stepNumber < 1 || stepNumber > this.totalSteps) return;
-
-        document.querySelectorAll('.form-step').forEach(step => {
+        if (stepNum < stepNumber) {
+            step.classList.add('completed');
             step.classList.remove('active');
-        });
-
-        const newStep = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
-        if (newStep) {
-            newStep.classList.add('active');
+        } else if (stepNum === stepNumber) {
+            step.classList.add('active');
+            step.classList.remove('completed');
+        } else {
+            step.classList.remove('active', 'completed');
         }
+    });
+}
 
-        this.updateProgress(stepNumber);
-        this.updateNavigationButtons(stepNumber);
-        this.currentStep = stepNumber;
-    }
+updateNavigationButtons(stepNumber) {
+    const nextBtn = document.getElementById('nextStep');
+    const prevBtn = document.getElementById('prevStep');
+    const submitBtn = document.getElementById('submitForm');
 
-    updateProgress(stepNumber) {
-        const steps = document.querySelectorAll('.progress-step');
-        
-        steps.forEach((step, index) => {
-            const stepNum = index + 1;
-            
-            if (stepNum < stepNumber) {
-                step.classList.add('completed');
-                step.classList.remove('active');
-            } else if (stepNum === stepNumber) {
-                step.classList.add('active');
-                step.classList.remove('completed');
-            } else {
-                step.classList.remove('active', 'completed');
-            }
-        });
-    }
+    prevBtn.style.display = stepNumber === 1 ? 'none' : 'flex';
+    nextBtn.style.display = stepNumber === this.totalSteps ? 'none' : 'flex';
+    submitBtn.style.display = stepNumber === this.totalSteps ? 'flex' : 'none';
+}
 
-    updateNavigationButtons(stepNumber) {
-        const nextBtn = document.getElementById('nextStep');
-        const prevBtn = document.getElementById('prevStep');
-        const submitBtn = document.getElementById('submitForm');
-
-        if (prevBtn) prevBtn.style.display = stepNumber === 1 ? 'none' : 'flex';
-        if (nextBtn) nextBtn.style.display = stepNumber === this.totalSteps ? 'none' : 'flex';
-        if (submitBtn) submitBtn.style.display = stepNumber === this.totalSteps ? 'flex' : 'none';
-    }
-
-    validateCurrentStep() {
-        const currentStepEl = document.querySelector(`.form-step[data-step="${this.currentStep}"]`);
-        const requiredInputs = currentStepEl.querySelectorAll('[required]');
-        
-        for (let input of requiredInputs) {
-            if (!input.value.trim()) {
-                input.focus();
-                this.showToast(`Please fill in the required field: ${input.previousElementSibling.textContent}`, 'error');
-                return false;
-            }
+validateCurrentStep() {
+    const currentStepEl = document.querySelector(`.form-step[data-step="${this.currentStep}"]`);
+    const requiredInputs = currentStepEl.querySelectorAll('[required]');
+    
+    for (let input of requiredInputs) {
+        if (!input.value.trim()) {
+            input.focus();
+            this.showToast(`Please fill in the required field: ${input.previousElementSibling.textContent}`, 'error');
+            return false;
         }
-        
-        return true;
+    }
+    
+    return true;
+}
+
+resetFormSteps() {
+    this.currentStep = 1;
+    this.goToStep(1);
+}
+
+setupFileUpload() {
+    const fileInput = document.getElementById('photo');
+    const uploadArea = document.getElementById('photoUpload');
+    const imagePreview = document.getElementById('imagePreview');
+
+    uploadArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('drag-over');
+    });
+
+    uploadArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('drag-over');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && files[0].type.startsWith('image/')) {
+            fileInput.files = files;
+            this.handleFileSelect(files[0]);
+        } else {
+            this.showToast('Please upload a valid image file', 'error');
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            this.handleFileSelect(e.target.files[0]);
+        }
+    });
+}
+
+handleFileSelect(file) {
+    const imagePreview = document.getElementById('imagePreview');
+    const uploadArea = document.getElementById('photoUpload');
+    
+    if (!file.type.startsWith('image/')) {
+        this.showToast('Please select an image file', 'error');
+        return;
     }
 
-    resetFormSteps() {
-        this.currentStep = 1;
-        this.goToStep(1);
+    if (file.size > 5 * 1024 * 1024) {
+        this.showToast('Image size should be less than 5MB', 'error');
+        return;
     }
 
-    setupFileUpload() {
-        const fileInput = document.getElementById('photo');
-        const uploadArea = document.getElementById('photoUpload');
-        const imagePreview = document.getElementById('imagePreview');
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        imagePreview.innerHTML = `
+            <img src="${e.target.result}" alt="Food preview">
+            <button type="button" class="remove-image">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        imagePreview.classList.add('active');
+        uploadArea.style.display = 'none';
 
-        if (!uploadArea || !fileInput) return;
-
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
+        // Add remove functionality
+        const removeBtn = imagePreview.querySelector('.remove-image');
+        removeBtn.addEventListener('click', () => {
+            imagePreview.innerHTML = '';
+            imagePreview.classList.remove('active');
+            uploadArea.style.display = 'block';
+            document.getElementById('photo').value = '';
         });
-
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('drag-over');
-        });
-
-        uploadArea.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('drag-over');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('drag-over');
-            const files = e.dataTransfer.files;
-            if (files.length > 0 && files[0].type.startsWith('image/')) {
-                fileInput.files = files;
-                this.handleFileSelect(files[0]);
-            } else {
-                this.showToast('Please upload a valid image file', 'error');
-            }
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                this.handleFileSelect(e.target.files[0]);
-            }
-        });
-    }
+    };
+    reader.readAsDataURL(file);
+}
 
     handleFileSelect(file) {
-        const imagePreview = document.getElementById('imagePreview');
         const uploadArea = document.getElementById('photoUpload');
-        
-        if (!file.type.startsWith('image/')) {
-            this.showToast('Please select an image file', 'error');
-            return;
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-            this.showToast('Image size should be less than 5MB', 'error');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            imagePreview.innerHTML = `
-                <img src="${e.target.result}" alt="Food preview">
-                <button type="button" class="remove-image">
-                    <i class="fas fa-times"></i>
-                </button>
+        if (file.type.startsWith('image/')) {
+            uploadArea.innerHTML = `
+                <i class="fas fa-check-circle" style="color: var(--primary-color);"></i>
+                <span style="color: var(--primary-color);">${file.name}</span>
             `;
-            imagePreview.classList.add('active');
-            uploadArea.style.display = 'none';
-
-            const removeBtn = imagePreview.querySelector('.remove-image');
-            removeBtn.addEventListener('click', () => {
-                imagePreview.innerHTML = '';
-                imagePreview.classList.remove('active');
-                uploadArea.style.display = 'block';
-                document.getElementById('photo').value = '';
-            });
-        };
-        reader.readAsDataURL(file);
+        }
     }
 
     setupFormHandling() {
         const form = document.getElementById('listingForm');
         
-        if (form) {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                this.handleFormSubmission();
-            });
-        }
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleFormSubmission();
+        });
 
         const freshUntilInput = document.getElementById('freshUntil');
-        if (freshUntilInput) {
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            freshUntilInput.min = now.toISOString().slice(0, 16);
-        }
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        freshUntilInput.min = now.toISOString().slice(0, 16);
     }
 
     handleFormSubmission() {
@@ -563,7 +386,7 @@ class ShareBite {
             contact: document.getElementById('contact').value,
             photo: document.getElementById('photo').files[0],
             createdAt: new Date(),
-            donor: this.userData ? this.userData.name : 'Current User'
+            donor: 'Current User'
         };
     }
 
@@ -608,6 +431,7 @@ class ShareBite {
             <span>${message}</span>
         `;
         
+        // Add toast styles
         toast.style.cssText = `
             position: fixed;
             top: 100px;
@@ -634,33 +458,23 @@ class ShareBite {
     }
 
     closeModalAndReset() {
-        const modal = document.getElementById('addListingModal');
-        if (modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
+        document.getElementById('addListingModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
         this.resetForm();
     }
 
     resetForm() {
-        const form = document.getElementById('listingForm');
-        if (form) form.reset();
+        document.getElementById('listingForm').reset();
+        document.getElementById('photoUpload').innerHTML = `
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Click to upload or drag and drop</span>
+        `;
         
-        const photoUpload = document.getElementById('photoUpload');
-        if (photoUpload) {
-            photoUpload.innerHTML = `
-                <i class="fas fa-cloud-upload-alt"></i>
-                <span>Drag & drop your image here or click to browse</span>
-                <small>Supports: JPG, PNG, GIF (Max 5MB)</small>
-            `;
-        }
-        
+        // Reset minimum date
         const freshUntilInput = document.getElementById('freshUntil');
-        if (freshUntilInput) {
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            freshUntilInput.min = now.toISOString().slice(0, 16);
-        }
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        freshUntilInput.min = now.toISOString().slice(0, 16);
     }
 
     setupFilteringAndSearch() {
@@ -669,26 +483,29 @@ class ShareBite {
         
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
+                // Remove active class from all buttons
                 filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
                 btn.classList.add('active');
                 
+                // Set current filter
                 this.currentFilter = btn.getAttribute('data-filter');
+                
+                // Filter and render listings
                 this.filterListings();
                 this.renderFoodListings();
             });
         });
 
-        if (searchInput) {
-            let searchTimeout;
-            searchInput.addEventListener('input', (e) => {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    this.searchQuery = e.target.value.toLowerCase();
-                    this.filterListings();
-                    this.renderFoodListings();
-                }, 300);
-            });
-        }
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                this.searchQuery = e.target.value.toLowerCase();
+                this.filterListings();
+                this.renderFoodListings();
+            }, 300);
+        });
     }
 
     filterListings() {
@@ -703,84 +520,58 @@ class ShareBite {
         });
     }
 
-    setupSmoothScrolling() {
-        const scrollIndicator = document.querySelector('.scroll-indicator');
-        
-        if (scrollIndicator) {
-            scrollIndicator.addEventListener('click', () => {
-                const features = document.getElementById('features');
-                if (features) {
-                    features.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        }
-    }
-
     setupResponsiveNav() {
         const hamburger = document.querySelector('.hamburger');
         const navMenu = document.querySelector('.nav-menu');
         
-        if (hamburger && navMenu) {
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('active');
-                navMenu.classList.toggle('active');
-            });
-        }
-    }
-
-    setupHeroButtons() {
-        const donateBtn = document.getElementById('donateFood');
-        const findBtn = document.getElementById('findFood');
-        
-        if (donateBtn) {
-            donateBtn.addEventListener('click', () => {
-                if (this.currentRole === 'donor') {
-                    const modal = document.getElementById('addListingModal');
-                    if (modal) {
-                        // Check authentication
-                        if (!this.isAuthenticated) {
-                            this.showToast('Please login to add a listing', 'error');
-                            setTimeout(() => {
-                                window.location.href = '/login.html';
-                            }, 1500);
-                            return;
-                        }
-                        modal.style.display = 'block';
-                        document.body.style.overflow = 'hidden';
-                    }
-                } else {
-                    const listings = document.getElementById('listings');
-                    if (listings) listings.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        }
-        
-        if (findBtn) {
-            findBtn.addEventListener('click', () => {
-                const listings = document.getElementById('listings');
-                if (listings) listings.scrollIntoView({ behavior: 'smooth' });
-            });
-        }
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
     }
 
     setupStatsAnimation() {
         const stats = document.querySelectorAll('.stat-number');
+        let animated = false;
         
-        stats.forEach(stat => {
-            const target = parseInt(stat.getAttribute('data-count'));
+        const animateStats = () => {
+            if (animated) return;
             
-            stat.style.cssText = `
-                display: block !important;
-                font-size: 2rem !important;
-                font-weight: 700 !important;
-                color: #FFC107 !important;
-                animation: none !important;
-                transform: none !important;
-                transition: none !important;
-            `;
+            stats.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-count'));
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+                
+                const updateStat = () => {
+                    current += increment;
+                    if (current < target) {
+                        stat.textContent = Math.floor(current);
+                        requestAnimationFrame(updateStat);
+                    } else {
+                        stat.textContent = target;
+                    }
+                };
+                
+                updateStat();
+            });
             
-            stat.textContent = target;
+            animated = true;
+        };
+        
+        // Trigger animation when hero section is in view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setTimeout(animateStats, 1000);
+                }
+            });
         });
+        
+        const heroStats = document.querySelector('.hero-stats');
+        if (heroStats) {
+            observer.observe(heroStats);
+        }
     }
 
     setupScrollEffects() {
@@ -795,9 +586,9 @@ class ShareBite {
             }
         };
         window.addEventListener('scroll', handleScroll);
-        // Apply initial state in case page loads scrolled (anchor/hash navigation)
         handleScroll();
         
+        // Animate elements on scroll
         this.setupScrollAnimations();
     }
 
@@ -815,6 +606,7 @@ class ShareBite {
             });
         }, observerOptions);
         
+        // Observe elements to animate
         const elementsToAnimate = document.querySelectorAll('.feature-card, .food-card, .impact-item');
         elementsToAnimate.forEach(el => {
             observer.observe(el);
@@ -880,7 +672,7 @@ class ShareBite {
                 foodType: "Fruit & Vegetable Box",
                 quantity: "1 large box",
                 category: "restaurant",
-                description: "Fresh produce that includes apples, oranges, carrots, and lettuce.",
+                description: "Fresh produce includes apples, oranges, carrots, and lettuce.",
                 freshUntil: this.getRandomFutureDate(),
                 pickupTime: "17:00",
                 location: "Green Garden Restaurant",
@@ -948,16 +740,15 @@ class ShareBite {
 
     getRandomFutureDate() {
         const now = new Date();
-        const hours = Math.floor(Math.random() * 48) + 2;
+        const hours = Math.floor(Math.random() * 48) + 2; // 2 to 50 hours from now
         const futureDate = new Date(now.getTime() + hours * 60 * 60 * 1000);
         return futureDate.toISOString().slice(0, 16);
     }
 
     renderFoodListings() {
-        const foodGrid = document.getElementById('foodGrid');
-        const listingsToShow = this.filteredListings.slice(0, 6);
-
-        if (listingsToShow.length === 0) {
+        const foodGrid = document.getElementById('fullfoodGrid');
+        
+        if (this.filteredListings.length === 0) {
             foodGrid.innerHTML = `
                 <div class="no-listings">
                     <i class="fas fa-search" style="font-size: 3rem; color: var(--medium-gray); margin-bottom: 1rem;"></i>
@@ -967,9 +758,9 @@ class ShareBite {
             `;
             return;
         }
-
-        foodGrid.innerHTML = listingsToShow.map(listing => this.createFoodCard(listing)).join('');
-
+        
+        foodGrid.innerHTML = this.filteredListings.map(listing => this.createFoodCard(listing)).join('');
+        
         // Add event listeners to food cards
         this.setupFoodCardInteractions();
     }
@@ -1042,6 +833,7 @@ class ShareBite {
     }
 
     setupFoodCardInteractions() {
+        // Claim buttons
         const claimBtns = document.querySelectorAll('.claim-btn');
         claimBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -1050,6 +842,7 @@ class ShareBite {
             });
         });
         
+        // Contact buttons
         const contactBtns = document.querySelectorAll('.contact-btn');
         contactBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -1060,21 +853,6 @@ class ShareBite {
     }
 
     handleClaimFood(listingId) {
-        // Check authentication
-        if (!this.isAuthenticated) {
-            this.showToast('Please login to claim food', 'error');
-            setTimeout(() => {
-                window.location.href = '/login.html';
-            }, 1500);
-            return;
-        }
-        
-        // Check if user is a collector
-        if (this.currentRole !== 'collector') {
-            this.showToast('Only collectors can claim food', 'error');
-            return;
-        }
-        
         const listing = this.foodListings.find(l => l.id === listingId);
         if (!listing) return;
         
@@ -1107,18 +885,13 @@ class ShareBite {
             
             this.addNotification(notification);
             
-            // Update button and card appearance
+            // Update button appearance only
             const claimBtn = document.querySelector(`[data-id="${listingId}"]`);
-            const foodCard = document.querySelector(`.food-card[data-id="${listingId}"]`);
             
             if (claimBtn) {
                 claimBtn.classList.add('claimed');
                 claimBtn.innerHTML = '<i class="fas fa-check-circle"></i> Claimed';
                 claimBtn.disabled = true;
-            }
-            
-            if (foodCard) {
-                foodCard.classList.add('claimed');
             }
             
             // Show success message
@@ -1130,9 +903,11 @@ class ShareBite {
     }
 
     handleContactDonor(contact) {
+        // Copy contact to clipboard
         navigator.clipboard.writeText(contact).then(() => {
             this.showToast('Contact information copied to clipboard!', 'success');
         }).catch(() => {
+            // Fallback for older browsers
             const textArea = document.createElement('textarea');
             textArea.value = contact;
             document.body.appendChild(textArea);
@@ -1195,12 +970,16 @@ class ShareBite {
     }
 
     startAnimations() {
+        // Add stagger animation to feature cards
         const featureCards = document.querySelectorAll('.feature-card');
         featureCards.forEach((card, index) => {
             card.style.animationDelay = `${index * 0.2}s`;
         });
         
+        // Add floating animation to hero elements
         this.startFloatingAnimations();
+        
+        // Add periodic pulse to CTA buttons
         this.startButtonPulse();
     }
 
@@ -1222,19 +1001,17 @@ class ShareBite {
                     }, 600);
                 }, index * 200);
             });
-        }, 10000);
+        }, 10000); // Pulse every 10 seconds
     }
 
     hideLoadingOverlay() {
         const loadingOverlay = document.getElementById('loadingOverlay');
-        if (loadingOverlay) {
+        setTimeout(() => {
+            loadingOverlay.style.opacity = '0';
             setTimeout(() => {
-                loadingOverlay.style.opacity = '0';
-                setTimeout(() => {
-                    loadingOverlay.style.display = 'none';
-                }, 500);
-            }, 1500);
-        }
+                loadingOverlay.style.display = 'none';
+            }, 500);
+        }, 1500); // Show loading for 1.5 seconds
     }
 
     // Notification System Methods
@@ -1430,6 +1207,7 @@ Contact information has been copied to clipboard.
     }
 }
 
+// Additional CSS animations via JavaScript
 function addDynamicStyles() {
     const style = document.createElement('style');
     style.textContent = `
@@ -1477,6 +1255,7 @@ function addDynamicStyles() {
             color: var(--dark-gray);
         }
         
+        /* Hamburger menu animation */
         .hamburger.active span:nth-child(1) {
             transform: rotate(-45deg) translate(-5px, 6px);
         }
@@ -1489,11 +1268,7 @@ function addDynamicStyles() {
             transform: rotate(45deg) translate(-5px, -6px);
         }
         
-        .role-switch.disabled {
-            pointer-events: none;
-            cursor: not-allowed !important;
-        }
-        
+        /* Mobile menu styles */
         @media (max-width: 768px) {
             .nav-menu.active {
                 display: flex;
@@ -1520,14 +1295,16 @@ function addDynamicStyles() {
     document.head.appendChild(style);
 }
 
+// Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     addDynamicStyles();
-    new ShareBite();
+    new ShareBiteFoodListing();
 });
 
+// Service Worker registration for PWA capabilities (optional)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('../sw.js')
             .then(registration => {
                 console.log('SW registered: ', registration);
             })
@@ -1537,8 +1314,10 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-window.ShareBite = ShareBite;
+// Export for potential testing or external use
+window.ShareBiteFoodListing = ShareBiteFoodListing;
 
+// Clear caches and trigger SW skipWaiting for debugging updates
 window.clearShareBiteCaches = async function() {
     if ('caches' in window) {
         const keys = await caches.keys();
@@ -1550,22 +1329,3 @@ window.clearShareBiteCaches = async function() {
         console.log('[ShareBite] Sent SKIP_WAITING to service worker');
     }
 };
-
-// ===== Scroll to Top Button =====
-const scrollToTopBtn = document.getElementById("scrollToTopBtn");
-
-window.addEventListener("scroll", () => {
-  const scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
-  if (scrollPosition > 200) {
-    scrollToTopBtn.classList.add("show");
-  } else {
-    scrollToTopBtn.classList.remove("show");
-  }
-});
-
-scrollToTopBtn.addEventListener("click", () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-});
