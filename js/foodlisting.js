@@ -1,6 +1,6 @@
 // ShareBite JavaScript - Interactive Food Waste Reduction Platform
 
-class ShareBite {
+class ShareBiteFoodListing {
     constructor() {
         this.currentRole = 'donor';
         this.foodListings = [];
@@ -70,14 +70,8 @@ class ShareBite {
         // Filtering and search
         this.setupFilteringAndSearch();
         
-        // Smooth scrolling
-        this.setupSmoothScrolling();
-        
         // Responsive navigation
         this.setupResponsiveNav();
-        
-        // Hero button interactions
-        this.setupHeroButtons();
         
         // Statistics counter animation
         this.setupStatsAnimation();
@@ -91,13 +85,19 @@ class ShareBite {
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 const href = link.getAttribute('href');
-                // Ignore .html links
-                if (href && href.endsWith('.html')) return;
-                e.preventDefault();
-                const targetId = href.substring(1);
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                // If it's an anchor for current page, scroll smoothly
+                if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    const targetId = href.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                } else if (href && href.includes('.html#')) {
+                    // If it's index.html#features or similar, navigate normally
+                    // (let browser handle navigation)
+                } else if (href && href.endsWith('.html')) {
+                    // If it's a plain .html link, let browser handle navigation
                 }
             });
         });
@@ -123,18 +123,18 @@ class ShareBite {
         const notificationBell = document.getElementById('notificationBell');
         
         if (this.currentRole === 'collector') {
-            donateBtn.innerHTML = '<i class="fas fa-search"></i> Find Food';
-            findBtn.innerHTML = '<i class="fas fa-heart"></i> Help Others';
-            addListingBtn.style.display = 'none';
+            if (donateBtn) donateBtn.innerHTML = '<i class="fas fa-search"></i> Find Food';
+            if (findBtn) findBtn.innerHTML = '<i class="fas fa-heart"></i> Help Others';
+            if (addListingBtn) addListingBtn.style.display = 'none';
             
             // Show notification bell for collectors
             if (notificationBell) {
                 notificationBell.style.display = 'block';
             }
         } else {
-            donateBtn.innerHTML = '<i class="fas fa-heart"></i> Donate Food';
-            findBtn.innerHTML = '<i class="fas fa-search"></i> Find Food';
-            addListingBtn.style.display = 'flex';
+            if (donateBtn) donateBtn.innerHTML = '<i class="fas fa-heart"></i> Donate Food';
+            if (findBtn) findBtn.innerHTML = '<i class="fas fa-search"></i> Find Food';
+            if (addListingBtn) addListingBtn.style.display = 'flex';
             
             // Hide notification bell for donors (unless they have notifications)
             if (notificationBell && this.notifications.length === 0) {
@@ -520,14 +520,6 @@ handleFileSelect(file) {
         });
     }
 
-    setupSmoothScrolling() {
-        const scrollIndicator = document.querySelector('.scroll-indicator');
-        
-        scrollIndicator.addEventListener('click', () => {
-            document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
-        });
-    }
-
     setupResponsiveNav() {
         const hamburger = document.querySelector('.hamburger');
         const navMenu = document.querySelector('.nav-menu');
@@ -535,24 +527,6 @@ handleFileSelect(file) {
         hamburger.addEventListener('click', () => {
             hamburger.classList.toggle('active');
             navMenu.classList.toggle('active');
-        });
-    }
-
-    setupHeroButtons() {
-        const donateBtn = document.getElementById('donateFood');
-        const findBtn = document.getElementById('findFood');
-        
-        donateBtn.addEventListener('click', () => {
-            if (this.currentRole === 'donor') {
-                document.getElementById('addListingModal').style.display = 'block';
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.getElementById('listings').scrollIntoView({ behavior: 'smooth' });
-            }
-        });
-        
-        findBtn.addEventListener('click', () => {
-            document.getElementById('listings').scrollIntoView({ behavior: 'smooth' });
         });
     }
 
@@ -771,10 +745,9 @@ handleFileSelect(file) {
     }
 
     renderFoodListings() {
-        const foodGrid = document.getElementById('foodGrid');
-        const listingsToShow = this.filteredListings.slice(0, 6);
-
-        if (listingsToShow.length === 0) {
+        const foodGrid = document.getElementById('fullfoodGrid');
+        
+        if (this.filteredListings.length === 0) {
             foodGrid.innerHTML = `
                 <div class="no-listings">
                     <i class="fas fa-search" style="font-size: 3rem; color: var(--medium-gray); margin-bottom: 1rem;"></i>
@@ -784,9 +757,9 @@ handleFileSelect(file) {
             `;
             return;
         }
-
-        foodGrid.innerHTML = listingsToShow.map(listing => this.createFoodCard(listing)).join('');
-
+        
+        foodGrid.innerHTML = this.filteredListings.map(listing => this.createFoodCard(listing)).join('');
+        
         // Add event listeners to food cards
         this.setupFoodCardInteractions();
     }
@@ -911,18 +884,13 @@ handleFileSelect(file) {
             
             this.addNotification(notification);
             
-            // Update button and card appearance
+            // Update button appearance only
             const claimBtn = document.querySelector(`[data-id="${listingId}"]`);
-            const foodCard = document.querySelector(`.food-card[data-id="${listingId}"]`);
             
             if (claimBtn) {
                 claimBtn.classList.add('claimed');
                 claimBtn.innerHTML = '<i class="fas fa-check-circle"></i> Claimed';
                 claimBtn.disabled = true;
-            }
-            
-            if (foodCard) {
-                foodCard.classList.add('claimed');
             }
             
             // Show success message
@@ -1329,13 +1297,13 @@ function addDynamicStyles() {
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     addDynamicStyles();
-    new ShareBite();
+    new ShareBiteFoodListing();
 });
 
 // Service Worker registration for PWA capabilities (optional)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('../sw.js')
             .then(registration => {
                 console.log('SW registered: ', registration);
             })
@@ -1346,7 +1314,7 @@ if ('serviceWorker' in navigator) {
 }
 
 // Export for potential testing or external use
-window.ShareBite = ShareBite;
+window.ShareBiteFoodListing = ShareBiteFoodListing;
 
 // Clear caches and trigger SW skipWaiting for debugging updates
 window.clearShareBiteCaches = async function() {
@@ -1360,22 +1328,3 @@ window.clearShareBiteCaches = async function() {
         console.log('[ShareBite] Sent SKIP_WAITING to service worker');
     }
 };
-
-// ===== Scroll to Top Button =====
-const scrollToTopBtn = document.getElementById("scrollToTopBtn");
-
-window.addEventListener("scroll", () => {
-  const scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
-  if (scrollPosition > 200) {
-    scrollToTopBtn.classList.add("show");
-  } else {
-    scrollToTopBtn.classList.remove("show");
-  }
-});
-
-scrollToTopBtn.addEventListener("click", () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-});
