@@ -3010,4 +3010,30 @@ body.dark-mode .notification-bell:hover {
     margin: 0 1rem;
     font-size: 1.2rem;
   }
+<<<<<<< Updated upstream
 
+=======
+}
+
+
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    font-weight: 500;
+    z-index: 1000;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+>>>>>>> Stashed changes
