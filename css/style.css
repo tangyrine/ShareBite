@@ -77,6 +77,12 @@ body {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+/* Navbar state when scrolled (light mode) */
+.navbar.scrolled {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: var(--shadow-light);
+}
+
 .nav-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -1615,6 +1621,12 @@ body {
     border-bottom: 1px solid #2a2a2a;
 }
 
+/* Navbar state when scrolled (dark mode) */
+:root.dark .navbar.scrolled {
+    background: rgba(18,18,18,0.95);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+}
+
 :root.dark .nav-link { color: var(--medium-gray); }
 :root.dark .nav-link:hover { color: var(--primary-light); }
 
@@ -2975,5 +2987,4 @@ body.dark-mode .notification-bell:hover {
     margin: 0 1rem;
     font-size: 1.2rem;
   }
-}
 
