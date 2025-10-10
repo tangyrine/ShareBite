@@ -486,41 +486,6 @@ class ShareBite {
         });
     }
 
-    handleFileSelect(file) {
-        const imagePreview = document.getElementById('imagePreview');
-        const uploadArea = document.getElementById('photoUpload');
-        
-        if (!file.type.startsWith('image/')) {
-            this.showToast('Please select an image file', 'error');
-            return;
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-            this.showToast('Image size should be less than 5MB', 'error');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            imagePreview.innerHTML = `
-                <img src="${e.target.result}" alt="Food preview">
-                <button type="button" class="remove-image">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            imagePreview.classList.add('active');
-            uploadArea.style.display = 'none';
-
-            const removeBtn = imagePreview.querySelector('.remove-image');
-            removeBtn.addEventListener('click', () => {
-                imagePreview.innerHTML = '';
-                imagePreview.classList.remove('active');
-                uploadArea.style.display = 'block';
-                document.getElementById('photo').value = '';
-            });
-        };
-        reader.readAsDataURL(file);
-    }
 
     setupFormHandling() {
         const form = document.getElementById('listingForm');
@@ -551,6 +516,11 @@ class ShareBite {
     }
 
     getFormData() {
+        const selectedTags = [];
+        document.querySelectorAll('input[name="dietary"]:checked').forEach(function(checkbox) {
+            selectedTags.push(checkbox.value);
+        });
+
         return {
             id: Date.now(),
             foodType: document.getElementById('foodType').value,
@@ -563,7 +533,8 @@ class ShareBite {
             contact: document.getElementById('contact').value,
             photo: document.getElementById('photo').files[0],
             createdAt: new Date(),
-            donor: this.userData ? this.userData.name : 'Current User'
+            donor: 'Current User',
+            dietaryTags: selectedTags 
         };
     }
 
@@ -664,42 +635,92 @@ class ShareBite {
     }
 
     setupFilteringAndSearch() {
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const searchInput = document.querySelector('.search-box input');
-        
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                
-                this.currentFilter = btn.getAttribute('data-filter');
+    // --- Existing Category Filter Logic ---
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            this.currentFilter = btn.getAttribute('data-filter');
+            this.filterListings();
+            this.renderFoodListings();
+        });
+    });
+
+    // --- Existing Search Input Logic ---
+    const searchInput = document.querySelector('.search-box input');
+    let searchTimeout;
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            this.searchQuery = e.target.value.toLowerCase();
+            this.filterListings();
+            this.renderFoodListings();
+        }, 300);
+    });
+
+    // --- NEW: Dropdown and Filtering Logic ---
+    const dietaryBtn = document.getElementById('dietary-filter-btn');
+    const dietaryDropdown = document.getElementById('dietary-dropdown');
+    const dietaryCheckboxes = document.querySelectorAll('input[name="dietary-filter"]');
+
+    if (dietaryBtn) {
+        // Toggle dropdown visibility
+        dietaryBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dietaryDropdown.style.display = dietaryDropdown.style.display === 'block' ? 'none' : 'block';
+            dietaryBtn.classList.toggle('active');
+        });
+
+        // Add event listeners to checkboxes
+        dietaryCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
                 this.filterListings();
                 this.renderFoodListings();
+                
+                // Update button text to show selected count
+                const selectedCount = document.querySelectorAll('input[name="dietary-filter"]:checked').length;
+                const btnSpan = dietaryBtn.querySelector('span');
+                if (selectedCount > 0) {
+                    btnSpan.textContent = `Dietary Filters (${selectedCount})`;
+                } else {
+                    btnSpan.textContent = 'Dietary Filters';
+                }
             });
         });
 
-        if (searchInput) {
-            let searchTimeout;
-            searchInput.addEventListener('input', (e) => {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    this.searchQuery = e.target.value.toLowerCase();
-                    this.filterListings();
-                    this.renderFoodListings();
-                }, 300);
-            });
-        }
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            if (dietaryDropdown.style.display === 'block') {
+                dietaryDropdown.style.display = 'none';
+                dietaryBtn.classList.remove('active');
+            }
+        });
+        
+        // Prevent closing when clicking inside the dropdown
+        dietaryDropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
     }
-
+}
     filterListings() {
+        const activeDietaryFilters = [];
+        document.querySelectorAll('input[name="dietary-filter"]:checked').forEach(checkbox => {
+            activeDietaryFilters.push(checkbox.value);
+        });
+
         this.filteredListings = this.foodListings.filter(listing => {
             const matchesFilter = this.currentFilter === 'all' || listing.category === this.currentFilter;
+            
             const matchesSearch = !this.searchQuery || 
                 listing.foodType.toLowerCase().includes(this.searchQuery) ||
                 listing.location.toLowerCase().includes(this.searchQuery) ||
                 listing.description.toLowerCase().includes(this.searchQuery);
+
+            const matchesDietary = activeDietaryFilters.length === 0 || 
+                (listing.dietaryTags && activeDietaryFilters.every(filter => listing.dietaryTags.includes(filter)));
             
-            return matchesFilter && matchesSearch;
+            return matchesFilter && matchesSearch && matchesDietary;
         });
     }
 
@@ -834,7 +855,8 @@ class ShareBite {
                 location: "Mario's Pizzeria, 123 Main Street",
                 contact: "+1 234-567-8900",
                 createdAt: new Date(Date.now() - 3600000),
-                donor: "Mario's Pizzeria"
+                donor: "Mario's Pizzeria",
+                dietaryTags: ["vegetarian"]
             },
             {
                 id: 2,
@@ -847,7 +869,8 @@ class ShareBite {
                 location: "Downtown Conference Center",
                 contact: "events@conference.com",
                 createdAt: new Date(Date.now() - 7200000),
-                donor: "Conference Center"
+                donor: "Conference Center",
+                dietaryTags: ["non-vegetarian"]
             },
             {
                 id: 3,
@@ -860,7 +883,8 @@ class ShareBite {
                 location: "Sunrise Bakery, Oak Avenue",
                 contact: "+1 234-567-8901",
                 createdAt: new Date(Date.now() - 1800000),
-                donor: "Sunrise Bakery"
+                donor: "Sunrise Bakery",
+                dietaryTags: ["diary-free"]
             },
             {
                 id: 4,
@@ -873,7 +897,8 @@ class ShareBite {
                 location: "Residential Area, Pine Street",
                 contact: "+1 234-567-8902",
                 createdAt: new Date(Date.now() - 900000),
-                donor: "Local Family"
+                donor: "Local Family",
+                dietaryTags: ["vegetarian", "gluten-free"]
             },
             {
                 id: 5,
@@ -886,7 +911,8 @@ class ShareBite {
                 location: "Green Garden Restaurant",
                 contact: "+1 234-567-8903",
                 createdAt: new Date(Date.now() - 5400000),
-                donor: "Green Garden Restaurant"
+                donor: "Green Garden Restaurant",
+                dietaryTags: ["vegan"]
             },
             {
                 id: 5,
@@ -899,7 +925,8 @@ class ShareBite {
                 location: "Green Garden Restaurant",
                 contact: "+1 234-567-8903",
                 createdAt: new Date(Date.now() - 5400000),
-                donor: "Green Garden Restaurant"
+                donor: "Green Garden Restaurant",
+                dietaryTags: ["vegan"]
             },
             {
                 id: 7,
@@ -912,7 +939,8 @@ class ShareBite {
                 location: "Green Garden Restaurant",
                 contact: "+1 234-567-8903",
                 createdAt: new Date(Date.now() - 5400000),
-                donor: "Green Garden Restaurant"
+                donor: "Green Garden Restaurant",
+                dietaryTags: ["vegan"]
             },
             {
                 id: 8,
@@ -925,7 +953,8 @@ class ShareBite {
                 location: "Green Garden Restaurant",
                 contact: "+1 234-567-8903",
                 createdAt: new Date(Date.now() - 5400000),
-                donor: "Green Garden Restaurant"
+                donor: "Green Garden Restaurant",
+                dietaryTags: ["vegan"]
             },
             {
                 id: 6,
@@ -938,7 +967,8 @@ class ShareBite {
                 location: "Healthy Eats Cafe, Market Square",
                 contact: "+1 234-567-8904",
                 createdAt: new Date(Date.now() - 2700000),
-                donor: "Healthy Eats Cafe"
+                donor: "Healthy Eats Cafe",
+                dietaryTags: ["non-vegetarian", "diary-free"]
             }
         ];
         
@@ -956,6 +986,9 @@ class ShareBite {
     renderFoodListings() {
         const foodGrid = document.getElementById('foodGrid');
         const listingsToShow = this.filteredListings.slice(0, 6);
+        if (!foodGrid) {
+            return; 
+        }
 
         if (listingsToShow.length === 0) {
             foodGrid.innerHTML = `
@@ -999,20 +1032,31 @@ class ShareBite {
         }
     }
 
-    createFoodCard(listing) {
+   createFoodCard(listing) {
         const timeAgo = this.getTimeAgo(listing.createdAt);
         const freshUntil = this.formatDateTime(listing.freshUntil);
-        const pickupTime = this.formatTime(listing.pickupTime);
         const isClaimed = this.claimedItems.includes(listing.id);
+
+        // This logic generates the HTML for the tags
+        let tagsHTML = '';
+        if (listing.dietaryTags && listing.dietaryTags.length > 0) {
+            tagsHTML = `<div class="food-tags">` +
+                listing.dietaryTags.map(tag => `<span class="tag tag-${tag}">${tag}</span>`).join('') +
+            `</div>`;
+        }
         
+        // The return statement now correctly includes the tagsHTML
         return `
-            <div class="food-card ${isClaimed ? 'claimed' : ''}" data-id="${listing.id}">
+            <div class="food-card ${isClaimed ? 'claimed' : ''}" 
+                 data-id="${listing.id}" 
+                 data-tags="${listing.dietaryTags ? listing.dietaryTags.join(',') : ''}">
                 <div class="food-image">
                     ${listing.photo ? `<img src="${URL.createObjectURL(listing.photo)}" alt="${listing.foodType}">` : `<i class="fas fa-${this.getFoodIcon(listing.category)}"></i>`}
                     <div class="food-category">${this.capitalizeFirst(listing.category)}</div>
                 </div>
                 <div class="food-details">
                     <h3 class="food-title">${listing.foodType}</h3>
+                    ${tagsHTML} 
                     <p class="food-description">${listing.description}</p>
                     <div class="food-meta">
                         <span class="quantity"><i class="fas fa-utensils"></i> ${listing.quantity}</span>
@@ -1525,17 +1569,18 @@ document.addEventListener('DOMContentLoaded', () => {
     new ShareBite();
 });
 
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('SW registered: ', registration);
-            })
-            .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
-            });
-    });
-}
+// Service Worker registration for PWA capabilities (optional)
+// if ('serviceWorker' in navigator) {
+//     window.addEventListener('load', () => {
+//         navigator.serviceWorker.register('/sw.js')
+//             .then(registration => {
+//                 console.log('SW registered: ', registration);
+//             })
+//             .catch(registrationError => {
+//                 console.log('SW registration failed: ', registrationError);
+//             });
+//     });
+// }
 
 window.ShareBite = ShareBite;
 
@@ -1569,3 +1614,505 @@ scrollToTopBtn.addEventListener("click", () => {
     behavior: "smooth",
   });
 });
+
+// ===== Gallery Animation and Interactivity =====
+class GalleryManager {
+    constructor() {
+        this.galleryItems = document.querySelectorAll('.gallery-item');
+        this.init();
+    }
+
+    init() {
+        this.setupScrollAnimation();
+        this.setupHoverEffects();
+        this.setupClickEvents();
+    }
+
+    setupScrollAnimation() {
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('gallery-visible');
+                }
+            });
+        }, observerOptions);
+
+        this.galleryItems.forEach(item => {
+            observer.observe(item);
+        });
+    }
+
+    setupHoverEffects() {
+        this.galleryItems.forEach(item => {
+            // Add subtle parallax effect on mouse move
+            item.addEventListener('mousemove', (e) => {
+                const rect = item.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const moveX = (x - centerX) / 20;
+                const moveY = (y - centerY) / 20;
+
+                const img = item.querySelector('img');
+                if (img) {
+                    img.style.transform = `scale(1.1) translate(${moveX}px, ${moveY}px)`;
+                }
+            });
+
+            item.addEventListener('mouseleave', () => {
+                const img = item.querySelector('img');
+                if (img) {
+                    img.style.transform = 'scale(1.1)';
+                }
+            });
+        });
+    }
+
+    setupClickEvents() {
+        this.galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const category = item.getAttribute('data-category');
+                const title = item.querySelector('h3').textContent;
+                const description = item.querySelector('p').textContent;
+
+                // Optional: Open lightbox or show more details
+                this.showGalleryDetail(item, title, description, category);
+            });
+        });
+    }
+
+    showGalleryDetail(item, title, description, category) {
+        // Create a simple lightbox effect
+        const imgSrc = item.querySelector('img').src;
+
+        const lightbox = document.createElement('div');
+        lightbox.className = 'gallery-lightbox';
+        lightbox.innerHTML = `
+            <div class="lightbox-overlay"></div>
+            <div class="lightbox-content">
+                <button class="lightbox-close">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="lightbox-image-container">
+                    <img src="${imgSrc}" alt="${title}">
+                </div>
+                <div class="lightbox-info">
+                    <span class="lightbox-category">
+                        <i class="fas fa-tag"></i> ${category}
+                    </span>
+                    <h2>${title}</h2>
+                    <p>${description}</p>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(lightbox);
+        document.body.style.overflow = 'hidden';
+
+        // Animate in
+        setTimeout(() => {
+            lightbox.classList.add('active');
+        }, 10);
+
+        // Close handlers
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+        const overlay = lightbox.querySelector('.lightbox-overlay');
+
+        const closeLightbox = () => {
+            lightbox.classList.remove('active');
+            setTimeout(() => {
+                document.body.removeChild(lightbox);
+                document.body.style.overflow = 'auto';
+            }, 300);
+        };
+
+        closeBtn.addEventListener('click', closeLightbox);
+        overlay.addEventListener('click', closeLightbox);
+
+        // ESC key to close
+        const escHandler = (e) => {
+            if (e.key === 'Escape') {
+                closeLightbox();
+                document.removeEventListener('keydown', escHandler);
+            }
+        };
+        document.addEventListener('keydown', escHandler);
+    }
+}
+
+// Add lightbox styles dynamically
+function addGalleryLightboxStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .gallery-lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .gallery-lightbox.active {
+            opacity: 1;
+        }
+
+        .lightbox-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            cursor: pointer;
+        }
+
+        .lightbox-content {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: auto;
+            z-index: 1;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .gallery-lightbox.active .lightbox-content {
+            transform: scale(1);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #333;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .lightbox-image-container {
+            width: 100%;
+            max-height: 500px;
+            overflow: hidden;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .lightbox-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .lightbox-info {
+            padding: 2rem;
+        }
+
+        .lightbox-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .lightbox-info h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--black);
+            margin-bottom: 1rem;
+        }
+
+        .lightbox-info p {
+            font-size: 1.1rem;
+            color: var(--medium-gray);
+            line-height: 1.6;
+        }
+
+        /* Dark mode support */
+        :root.dark .lightbox-content {
+            background: #1E1E1E;
+            color: var(--black);
+        }
+
+        :root.dark .lightbox-info h2 {
+            color: var(--black);
+        }
+
+        :root.dark .lightbox-close {
+            background: rgba(42, 42, 42, 0.9);
+            color: white;
+        }
+
+        :root.dark .lightbox-close:hover {
+            background: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .lightbox-content {
+                margin: 1rem;
+            }
+
+            .lightbox-info h2 {
+                font-size: 1.5rem;
+            }
+
+            .lightbox-info p {
+                font-size: 1rem;
+            }
+
+            .lightbox-info {
+                padding: 1.5rem;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Initialize gallery when DOM is ready
+if (document.querySelector('.gallery-showcase')) {
+    addGalleryLightboxStyles();
+    new GalleryManager();
+}
+
+// ===== Testimonials Carousel =====
+class TestimonialsCarousel {
+    constructor() {
+        this.carousel = document.querySelector('.testimonials-carousel');
+        if (!this.carousel) return;
+
+        this.cards = document.querySelectorAll('.testimonial-card');
+        this.dots = document.querySelectorAll('.testimonial-dot');
+        this.prevBtn = document.querySelector('.testimonial-prev');
+        this.nextBtn = document.querySelector('.testimonial-next');
+
+        this.currentIndex = 0;
+        this.isAnimating = false;
+        this.autoPlayInterval = null;
+
+        this.init();
+    }
+
+    init() {
+        this.setupNavigation();
+        this.setupDots();
+        this.setupKeyboardNavigation();
+        this.setupTouchSwipe();
+        this.startAutoPlay();
+        this.animateStats();
+        this.pauseOnHover();
+    }
+
+    setupNavigation() {
+        this.prevBtn.addEventListener('click', () => this.goToPrevious());
+        this.nextBtn.addEventListener('click', () => this.goToNext());
+    }
+
+    setupDots() {
+        this.dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                this.goToSlide(index);
+            });
+        });
+    }
+
+    setupKeyboardNavigation() {
+        document.addEventListener('keydown', (e) => {
+            if (!this.isInViewport()) return;
+
+            if (e.key === 'ArrowLeft') {
+                this.goToPrevious();
+            } else if (e.key === 'ArrowRight') {
+                this.goToNext();
+            }
+        });
+    }
+
+    setupTouchSwipe() {
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        this.carousel.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        this.carousel.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            this.handleSwipe(touchStartX, touchEndX);
+        });
+    }
+
+    handleSwipe(startX, endX) {
+        const threshold = 50;
+        const diff = startX - endX;
+
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+                this.goToNext();
+            } else {
+                this.goToPrevious();
+            }
+        }
+    }
+
+    goToNext() {
+        if (this.isAnimating) return;
+
+        const nextIndex = (this.currentIndex + 1) % this.cards.length;
+        this.goToSlide(nextIndex);
+    }
+
+    goToPrevious() {
+        if (this.isAnimating) return;
+
+        const prevIndex = (this.currentIndex - 1 + this.cards.length) % this.cards.length;
+        this.goToSlide(prevIndex);
+    }
+
+    goToSlide(index) {
+        if (this.isAnimating || index === this.currentIndex) return;
+
+        this.isAnimating = true;
+        this.stopAutoPlay();
+
+        // Remove all active classes
+        this.cards.forEach(card => {
+            card.classList.remove('active', 'prev');
+        });
+
+        this.dots.forEach(dot => {
+            dot.classList.remove('active');
+        });
+
+        // Set previous card
+        this.cards[this.currentIndex].classList.add('prev');
+
+        // Set active card
+        setTimeout(() => {
+            this.cards[index].classList.add('active');
+            this.dots[index].classList.add('active');
+            this.currentIndex = index;
+
+            setTimeout(() => {
+                this.isAnimating = false;
+                this.startAutoPlay();
+            }, 600);
+        }, 50);
+    }
+
+    startAutoPlay() {
+        this.stopAutoPlay();
+        this.autoPlayInterval = setInterval(() => {
+            this.goToNext();
+        }, 5000); // Change slide every 5 seconds
+    }
+
+    stopAutoPlay() {
+        if (this.autoPlayInterval) {
+            clearInterval(this.autoPlayInterval);
+            this.autoPlayInterval = null;
+        }
+    }
+
+    isInViewport() {
+        const rect = this.carousel.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+
+    animateStats() {
+        const statNumbers = document.querySelectorAll('.testimonial-stat-number[data-target]');
+
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+                    this.animateNumber(entry.target);
+                    entry.target.classList.add('animated');
+                }
+            });
+        }, observerOptions);
+
+        statNumbers.forEach(stat => observer.observe(stat));
+    }
+
+    animateNumber(element) {
+        const target = parseInt(element.getAttribute('data-target'));
+        const duration = 2000;
+        const increment = target / (duration / 16);
+        let current = 0;
+
+        const updateNumber = () => {
+            current += increment;
+            if (current < target) {
+                element.textContent = Math.floor(current);
+                requestAnimationFrame(updateNumber);
+            } else {
+                element.textContent = target + '+';
+            }
+        };
+
+        updateNumber();
+    }
+
+    // Pause autoplay when user hovers over carousel
+    pauseOnHover() {
+        this.carousel.addEventListener('mouseenter', () => {
+            this.stopAutoPlay();
+        });
+
+        this.carousel.addEventListener('mouseleave', () => {
+            this.startAutoPlay();
+        });
+    }
+}
+
+// Initialize testimonials carousel
+if (document.querySelector('.testimonials-section')) {
+    new TestimonialsCarousel();
+}
