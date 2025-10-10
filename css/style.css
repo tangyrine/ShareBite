@@ -3171,12 +3171,6 @@ body.dark-mode .notification-bell:hover {
     margin: 0 1rem;
     font-size: 1.2rem;
   }
-<<<<<<< Updated upstream
-
-=======
-}
-
-
 .toast {
     position: fixed;
     bottom: 30px;
@@ -3197,7 +3191,6 @@ body.dark-mode .notification-bell:hover {
     opacity: 1;
     transform: translateY(0);
 }
->>>>>>> Stashed changes
 
 /* Date Input Confirmation - Simple approach using native browser controls */
 .input-container-relative {
