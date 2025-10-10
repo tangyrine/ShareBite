@@ -17,9 +17,28 @@ class ShareBite {
     async initAuth() {
         await this.checkAuthentication();
         this.updateUIForAuthentication(); 
+        this.showWelcomeMessage(); 
         this.init();
         this.initTheme();
     }
+
+    showWelcomeMessage() {
+    if (sessionStorage.getItem('justLoggedIn') === 'true') {
+        const toast = document.getElementById('toast');
+        
+        if (this.userData && this.userData.name) {
+            toast.textContent = `Welcome back, ${this.userData.name}! 🎉`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Remove the flag so it doesn't show again on refresh
+        sessionStorage.removeItem('justLoggedIn');
+    }
+}
+
 
     async checkAuthentication() {
     try {
@@ -51,52 +70,72 @@ class ShareBite {
     updateUIForAuthentication() {
     const roleDisplay = document.getElementById('currentRole');
     const roleSwitch = document.getElementById('roleSwitch');
-    let loginBtn = document.querySelector('.login-btn'); 
+    const userActions = document.querySelector('.user-actions');
     
     console.log('Updating UI. Authenticated:', this.isAuthenticated, 'User:', this.userData);
     
     if (this.isAuthenticated && this.userData) {
-        
+        // Update role display
         if (roleDisplay) {
             roleDisplay.textContent = this.capitalizeFirst(this.userData.role);
         }
         
-
+        // Disable role switch
         if (roleSwitch) {
             roleSwitch.style.cursor = 'not-allowed';
             roleSwitch.style.opacity = '0.7';
             roleSwitch.title = 'Role is set based on your account';
-            
-            
-            const newRoleSwitch = roleSwitch.cloneNode(true);
-            roleSwitch.parentNode.replaceChild(newRoleSwitch, roleSwitch);
-            
-           
-            newRoleSwitch.classList.add('disabled');
+            roleSwitch.classList.add('disabled');
         }
         
+        // Remove ALL existing login buttons
+        const loginButtons = document.querySelectorAll('.login-btn');
+        loginButtons.forEach(btn => btn.remove());
         
-        if (loginBtn) {
-            console.log('Changing button to Logout');
-            
-            
-            const newLoginBtn = loginBtn.cloneNode(true);
-            newLoginBtn.textContent = 'Logout';
-            newLoginBtn.removeAttribute('onclick');
-            loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
-            
-            loginBtn = document.querySelector('.login-btn');
-            
-            if (loginBtn) {
-                loginBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    console.log('Logout clicked');
-                    this.handleLogout();
-                });
-            }
+        // Create logout button
+        const logoutBtn = document.createElement('button');
+        logoutBtn.className = 'login-btn logout-btn';
+        logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+        
+        // CRITICAL: Force the button to be clickable
+        logoutBtn.style.cssText = `
+            position: relative !important;
+            z-index: 99999 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        `;
+        
+        // Add click event with multiple handlers
+        logoutBtn.onclick = async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Logout button clicked via onclick');
+            await this.handleLogout();
+        };
+        
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Logout button clicked via addEventListener');
+            await this.handleLogout();
+        }, true); // Use capture phase
+        
+        // Add logout button to user actions
+        if (userActions) {
+            userActions.appendChild(logoutBtn);
         }
+        
+        console.log('✓ Logout button created:', logoutBtn);
+        
+        // Test if button is actually clickable
+        setTimeout(() => {
+            const btn = document.querySelector('.logout-btn');
+            console.log('Button in DOM:', btn);
+            console.log('Button styles:', window.getComputedStyle(btn));
+        }, 100);
         
         this.updateUIForRole();
+        
     } else {
         console.log('User not authenticated - showing Login button');
         
@@ -104,28 +143,45 @@ class ShareBite {
             roleDisplay.textContent = 'Donor';
         }
         
-        
-        if (loginBtn) {
-            console.log('Changing button to Login');
-            
-            
-            const newLoginBtn = loginBtn.cloneNode(true);
-            newLoginBtn.textContent = 'Login';
-            newLoginBtn.removeAttribute('onclick');
-            loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
-            
-            
-            loginBtn = document.querySelector('.login-btn');
-            
-           
-            if (loginBtn) {
-                loginBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.location.href = 'login.html';
-                });
-            }
+        // Remove logout button if exists
+        const logoutBtn = document.querySelector('.logout-btn');
+        if (logoutBtn) {
+            logoutBtn.remove();
         }
         
+        // Remove any existing login buttons first
+        const existingLoginButtons = document.querySelectorAll('.login-btn');
+        existingLoginButtons.forEach(btn => btn.remove());
+        
+        // Create single login button
+        const loginBtn = document.createElement('button');
+        loginBtn.className = 'login-btn';
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+        
+        // CRITICAL: Force the button to be clickable
+        loginBtn.style.cssText = `
+            position: relative !important;
+            z-index: 99999 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        `;
+        
+        // Use onclick
+        loginBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Login button clicked - redirecting to login.html');
+            window.location.href = 'login.html';
+        };
+        
+        // Add login button to user actions
+        if (userActions) {
+            userActions.appendChild(loginBtn);
+        }
+        
+        console.log('✓ Login button created and click handler attached');
+        
+        // Re-enable role switch
         if (roleSwitch) {
             roleSwitch.style.cursor = 'pointer';
             roleSwitch.style.opacity = '1';
@@ -134,6 +190,9 @@ class ShareBite {
     }
 }
 
+capitalizeFirst(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
     async handleLogout() {
     try {
         const res = await fetch('http://localhost:3000/logout', {

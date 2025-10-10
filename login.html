@@ -327,6 +327,8 @@ loginForm.addEventListener('submit', async(e) => {
         
         sessionStorage.setItem('userRole', data.role);
         sessionStorage.setItem('userName', data.name);
+        sessionStorage.setItem('justLoggedIn', 'true');
+
         
         alert("Login successful!");
         window.location.href = "http://localhost:3000/";

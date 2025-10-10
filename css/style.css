@@ -4191,3 +4191,22 @@ body.dark-mode .notification-bell:hover {
     background: var(--primary-dark);
     box-shadow: 0 4px 12px rgba(76, 175, 80, 0.5);
 }
+
+
+.login-btn, .logout-btn {
+    position: relative !important;
+    z-index: 99999 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+.user-actions {
+    position: relative;
+    z-index: 9999;
+}
+
+/* Make sure nothing overlays the navbar */
+.navbar {
+    position: relative;
+    z-index: 10000;
+}
