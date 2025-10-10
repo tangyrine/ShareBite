@@ -1332,7 +1332,6 @@ function addDynamicStyles() {
 document.addEventListener('DOMContentLoaded', () => {
     addDynamicStyles();
     new ShareBite();
-    setupDatetimeDoneButtons(); // Add datetime functionality
 });
 
 // Service Worker registration for PWA capabilities (optional)
