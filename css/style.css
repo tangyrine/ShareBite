@@ -21,7 +21,7 @@
     --medium-gray: #9E9E9E;
     --dark-gray: #424242;
     --black: #212121;
-    
+    --card-bg: var(--white);
     /* Gradients */
     --primary-gradient: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
     --secondary-gradient: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
@@ -51,6 +51,7 @@
     --transition-medium: 0.3s ease;
     --transition-slow: 0.5s ease;
 }
+/* FIX FOR AUTH PAGES IN DARK MODE */
 
 body {
     font-family: var(--font-family);
@@ -394,6 +395,161 @@ body {
     bottom: 25%;
     left: 25%;
     animation-delay: -4s;
+}
+/* Custom Multi-Select Dropdown */
+.dropdown-check-container {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-btn {
+    background-color: transparent;
+    color: var(--text-color);
+    padding: 10px 20px;
+    border: 1px solid var(--input-border);
+    border-radius: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.dropdown-btn:hover, .dropdown-btn.active {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+.dropdown-btn .fas {
+    transition: transform 0.3s ease;
+}
+
+.dropdown-btn.active .fas {
+    transform: rotate(180deg);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--card-bg);
+    min-width: 220px;
+    box-shadow: var(--shadow-heavy);
+    border-radius: var(--border-radius);
+    padding: 10px;
+    z-index: 100;
+    margin-top: 5px;
+}
+
+.dropdown-content label {
+    display: block;
+    color: var(--text-color);
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dropdown-content label:hover {
+    background-color: var(--hover-bg);
+}
+
+.dropdown-content input[type="checkbox"] {
+    accent-color: var(--secondary-orange);
+}
+/* Custom Checkbox Styling for the Modal */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.checkbox-group > div {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Reduced gap for better alignment */
+}
+
+/* Hide the default checkbox */
+.checkbox-group input[type="checkbox"] {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+/* Style the label to be the clickable area */
+.checkbox-group label {
+    position: relative;
+    cursor: pointer;
+    padding-left: 30px; /* Space for our custom checkbox */
+    font-weight: 400; /* Lighter font weight */
+}
+
+/* Create the custom checkbox 'box' (a circle in this case) */
+.checkbox-group label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--medium-gray);
+    background-color: transparent;
+    transition: all 0.2s ease;
+}
+
+/* Create the inner circle (the 'check') */
+.checkbox-group label::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%) scale(0); /* Hidden by default */
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--secondary-orange);
+    transition: all 0.2s ease;
+}
+
+/* Style changes when the checkbox is checked */
+.checkbox-group input[type="checkbox"]:checked + label::before {
+    border-color: var(--secondary-orange);
+}
+
+.checkbox-group input[type="checkbox"]:checked + label::after {
+    transform: translateY(-50%) scale(1); /* Show the inner circle */
+}
+
+/* Dark mode adjustments */
+:root.dark .checkbox-group label::before {
+    border-color: var(--medium-gray);
+}
+.food-tags {
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag {
+    background-color: var(--light-gray);
+    color: var(--dark-gray);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.dark .tag {
+    background-color: #444;
+    color: #ddd;
 }
 
 .floating-card {
@@ -1632,6 +1788,11 @@ body {
     --shadow-medium: 0 5px 25px rgba(0,0,0,0.7);
     --shadow-heavy: 0 10px 40px rgba(0,0,0,0.8);
     --hero-gradient: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    --text-color: #f1f1f1;
+    --input-border: #444;
+    --card-bg: #2E2E2E;
+    --hover-bg: #3a3a3a;
+    --secondary-orange: #FF6B35;
 }
 
 :root.dark body {

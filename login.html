@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="logo/logo.svg">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         :root {
             --primary-green: #4CAF50;
@@ -288,10 +289,10 @@
         let passwordVisible = false;
 
         togglePassword.addEventListener('click', () => {
-        passwordVisible = !passwordVisible;
-        passwordInput.type = passwordVisible ? 'text' : 'password';
-        togglePassword.innerHTML = passwordVisible ? eyeOffIcon : eyeIcon;
-        togglePassword.title = passwordVisible ? 'Hide Password' : 'Show Password';
+            passwordVisible = !passwordVisible;
+            passwordInput.type = passwordVisible ? 'text' : 'password';
+            togglePassword.innerHTML = passwordVisible ? eyeOffIcon : eyeIcon;
+            togglePassword.title = passwordVisible ? 'Hide Password' : 'Show Password';
         });
 
         // --- Form Submission ---
@@ -305,28 +306,21 @@
             const password = loginForm.password.value;
 
             if ( !email || !password ) {
-            alert("Please fill in all fields before logging.");
-            return;
-        }
+                alert("Please fill in all fields before logging.");
+                return;
+            }
 
-        // Show success message
-        alert("login  successfully!");
+            // Show success message
+            alert("login successfully!");
 
-        // Redirect to index.html after short delay (so alert can be seen)
-        setTimeout(() => {
-            window.location.href = "index.html";
-        }, 500); // 0.5 second delay
-    });
-    const password = document.getElementById("password");
-    const show_pwd = document.getElementById("show-pwd");
-    function passwordToggle(){
-        if (show_pwd.checked){
-            password.type = "text";
-        }else{
-            password.type = "password";
-        }
-    }
-    show_pwd.addEventListener("change",passwordToggle);
+            // Redirect to index.html after short delay (so alert can be seen)
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 500); // 0.5 second delay
+        });
+        
+        // ## THIS BROKEN SECTION HAS BEEN REMOVED ##
+
     </script>
 
 </body>

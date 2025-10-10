@@ -378,15 +378,7 @@ handleFileSelect(file) {
     reader.readAsDataURL(file);
 }
 
-    handleFileSelect(file) {
-        const uploadArea = document.getElementById('photoUpload');
-        if (file.type.startsWith('image/')) {
-            uploadArea.innerHTML = `
-                <i class="fas fa-check-circle" style="color: var(--primary-color);"></i>
-                <span style="color: var(--primary-color);">${file.name}</span>
-            `;
-        }
-    }
+
 
     setupFormHandling() {
         const form = document.getElementById('listingForm');
@@ -522,46 +514,95 @@ handleFileSelect(file) {
         freshUntilInput.min = now.toISOString().slice(0, 16);
     }
 
+
     setupFilteringAndSearch() {
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const searchInput = document.querySelector('.search-box input');
-        
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Remove active class from all buttons
-                filterBtns.forEach(b => b.classList.remove('active'));
-                // Add active class to clicked button
-                btn.classList.add('active');
-                
-                // Set current filter
-                this.currentFilter = btn.getAttribute('data-filter');
-                
-                // Filter and render listings
+    // --- Existing Category Filter Logic ---
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            this.currentFilter = btn.getAttribute('data-filter');
+            this.filterListings();
+            this.renderFoodListings();
+        });
+    });
+
+    // --- Existing Search Input Logic ---
+    const searchInput = document.querySelector('.search-box input');
+    let searchTimeout;
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            this.searchQuery = e.target.value.toLowerCase();
+            this.filterListings();
+            this.renderFoodListings();
+        }, 300);
+    });
+
+    // --- NEW: Dropdown and Filtering Logic ---
+    const dietaryBtn = document.getElementById('dietary-filter-btn');
+    const dietaryDropdown = document.getElementById('dietary-dropdown');
+    const dietaryCheckboxes = document.querySelectorAll('input[name="dietary-filter"]');
+
+    if (dietaryBtn) {
+        // Toggle dropdown visibility
+        dietaryBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dietaryDropdown.style.display = dietaryDropdown.style.display === 'block' ? 'none' : 'block';
+            dietaryBtn.classList.toggle('active');
+        });
+
+        // Add event listeners to checkboxes
+        dietaryCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
                 this.filterListings();
                 this.renderFoodListings();
+                
+                // Update button text to show selected count
+                const selectedCount = document.querySelectorAll('input[name="dietary-filter"]:checked').length;
+                const btnSpan = dietaryBtn.querySelector('span');
+                if (selectedCount > 0) {
+                    btnSpan.textContent = `Dietary Filters (${selectedCount})`;
+                } else {
+                    btnSpan.textContent = 'Dietary Filters';
+                }
             });
         });
 
-        let searchTimeout;
-        searchInput.addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                this.searchQuery = e.target.value.toLowerCase();
-                this.filterListings();
-                this.renderFoodListings();
-            }, 300);
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            if (dietaryDropdown.style.display === 'block') {
+                dietaryDropdown.style.display = 'none';
+                dietaryBtn.classList.remove('active');
+            }
+        });
+        
+        // Prevent closing when clicking inside the dropdown
+        dietaryDropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
         });
     }
+}
 
     filterListings() {
+        const activeDietaryFilters = [];
+        document.querySelectorAll('input[name="dietary-filter"]:checked').forEach(checkbox => {
+            activeDietaryFilters.push(checkbox.value);
+        });
+
         this.filteredListings = this.foodListings.filter(listing => {
             const matchesFilter = this.currentFilter === 'all' || listing.category === this.currentFilter;
+            
             const matchesSearch = !this.searchQuery || 
                 listing.foodType.toLowerCase().includes(this.searchQuery) ||
                 listing.location.toLowerCase().includes(this.searchQuery) ||
                 listing.description.toLowerCase().includes(this.searchQuery);
+
+            const matchesDietary = activeDietaryFilters.length === 0 || 
+                (listing.dietaryTags && activeDietaryFilters.every(filter => listing.dietaryTags.includes(filter)));
             
-            return matchesFilter && matchesSearch;
+            return matchesFilter && matchesSearch && matchesDietary;
         });
     }
 
@@ -671,7 +712,8 @@ handleFileSelect(file) {
                 location: "Mario's Pizzeria, 123 Main Street",
                 contact: "+1 234-567-8900",
                 createdAt: new Date(Date.now() - 3600000),
-                donor: "Mario's Pizzeria"
+                donor: "Mario's Pizzeria",
+                dietaryTags: ["vegetarian"]
             },
             {
                 id: 2,
@@ -684,7 +726,8 @@ handleFileSelect(file) {
                 location: "Downtown Conference Center",
                 contact: "events@conference.com",
                 createdAt: new Date(Date.now() - 7200000),
-                donor: "Conference Center"
+                donor: "Conference Center",
+                dietaryTags: ["non-vegetarian"]
             },
             {
                 id: 3,
@@ -697,7 +740,8 @@ handleFileSelect(file) {
                 location: "Sunrise Bakery, Oak Avenue",
                 contact: "+1 234-567-8901",
                 createdAt: new Date(Date.now() - 1800000),
-                donor: "Sunrise Bakery"
+                donor: "Sunrise Bakery",
+                dietaryTags: ["diary-free"]
             },
             {
                 id: 4,
@@ -710,7 +754,8 @@ handleFileSelect(file) {
                 location: "Residential Area, Pine Street",
                 contact: "+1 234-567-8902",
                 createdAt: new Date(Date.now() - 900000),
-                donor: "Local Family"
+                donor: "Local Family",
+                dietaryTags: ["vegetarian", "gluten-free"]
             },
             {
                 id: 5,
@@ -723,7 +768,8 @@ handleFileSelect(file) {
                 location: "Green Garden Restaurant",
                 contact: "+1 234-567-8903",
                 createdAt: new Date(Date.now() - 5400000),
-                donor: "Green Garden Restaurant"
+                donor: "Green Garden Restaurant",
+                dietaryTags: ["vegan"]
             },
             {
                 id: 5,
@@ -736,7 +782,8 @@ handleFileSelect(file) {
                 location: "Green Garden Restaurant",
                 contact: "+1 234-567-8903",
                 createdAt: new Date(Date.now() - 5400000),
-                donor: "Green Garden Restaurant"
+                donor: "Green Garden Restaurant",
+                dietaryTags: ["vegan"]
             },
             {
                 id: 7,
@@ -749,7 +796,8 @@ handleFileSelect(file) {
                 location: "Green Garden Restaurant",
                 contact: "+1 234-567-8903",
                 createdAt: new Date(Date.now() - 5400000),
-                donor: "Green Garden Restaurant"
+                donor: "Green Garden Restaurant",
+                dietaryTags: ["vegan"]
             },
             {
                 id: 8,
@@ -762,7 +810,8 @@ handleFileSelect(file) {
                 location: "Green Garden Restaurant",
                 contact: "+1 234-567-8903",
                 createdAt: new Date(Date.now() - 5400000),
-                donor: "Green Garden Restaurant"
+                donor: "Green Garden Restaurant",
+                dietaryTags: ["vegan"]
             },
             {
                 id: 6,
@@ -775,7 +824,8 @@ handleFileSelect(file) {
                 location: "Healthy Eats Cafe, Market Square",
                 contact: "+1 234-567-8904",
                 createdAt: new Date(Date.now() - 2700000),
-                donor: "Healthy Eats Cafe"
+                donor: "Healthy Eats Cafe",
+                dietaryTags: ["non-vegetarian", "diary-free"]
             }
         ];
         
@@ -791,7 +841,7 @@ handleFileSelect(file) {
     }
 
     renderFoodListings() {
-        const foodGrid = document.getElementById('fullfoodGrid');
+        const foodGrid = document.getElementById('foodGrid');
         
         if (this.filteredListings.length === 0) {
             foodGrid.innerHTML = `
@@ -838,17 +888,28 @@ handleFileSelect(file) {
     createFoodCard(listing) {
         const timeAgo = this.getTimeAgo(listing.createdAt);
         const freshUntil = this.formatDateTime(listing.freshUntil);
-        const pickupTime = this.formatTime(listing.pickupTime);
         const isClaimed = this.claimedItems.includes(listing.id);
+
+        // This logic generates the HTML for the tags
+        let tagsHTML = '';
+        if (listing.dietaryTags && listing.dietaryTags.length > 0) {
+            tagsHTML = `<div class="food-tags">` +
+                listing.dietaryTags.map(tag => `<span class="tag tag-${tag}">${tag}</span>`).join('') +
+            `</div>`;
+        }
         
+        // The return statement now correctly includes the tagsHTML
         return `
-            <div class="food-card ${isClaimed ? 'claimed' : ''}" data-id="${listing.id}">
+            <div class="food-card ${isClaimed ? 'claimed' : ''}" 
+                 data-id="${listing.id}" 
+                 data-tags="${listing.dietaryTags ? listing.dietaryTags.join(',') : ''}">
                 <div class="food-image">
                     ${listing.photo ? `<img src="${URL.createObjectURL(listing.photo)}" alt="${listing.foodType}">` : `<i class="fas fa-${this.getFoodIcon(listing.category)}"></i>`}
                     <div class="food-category">${this.capitalizeFirst(listing.category)}</div>
                 </div>
                 <div class="food-details">
                     <h3 class="food-title">${listing.foodType}</h3>
+                    ${tagsHTML} 
                     <p class="food-description">${listing.description}</p>
                     <div class="food-meta">
                         <span class="quantity"><i class="fas fa-utensils"></i> ${listing.quantity}</span>
@@ -1541,17 +1602,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Service Worker registration for PWA capabilities (optional)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('../sw.js')
-            .then(registration => {
-                console.log('SW registered: ', registration);
-            })
-            .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
-            });
-    });
-}
+// if ('serviceWorker' in navigator) {
+//     window.addEventListener('load', () => {
+//         navigator.serviceWorker.register('../sw.js')
+//             .then(registration => {
+//                 console.log('SW registered: ', registration);
+//             })
+//             .catch(registrationError => {
+//                 console.log('SW registration failed: ', registrationError);
+//             });
+//     });
+// }
 
 // Export for potential testing or external use
 window.ShareBiteFoodListing = ShareBiteFoodListing;
