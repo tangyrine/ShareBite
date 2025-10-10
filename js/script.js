@@ -1328,50 +1328,6 @@ function addDynamicStyles() {
     document.head.appendChild(style);
 }
 
-// Simple datetime done button functionality
-function setupDatetimeDoneButtons() {
-    const datetimeContainers = document.querySelectorAll('.datetime-input-container');
-    
-    datetimeContainers.forEach(container => {
-        const input = container.querySelector('input[type="datetime-local"], input[type="time"]');
-        const doneBtn = container.querySelector('.datetime-done-btn');
-        
-        if (!input || !doneBtn) return;
-        
-        // Show done button when input has value and user interacted
-        input.addEventListener('change', () => {
-            if (input.value.trim()) {
-                doneBtn.classList.add('show');
-            }
-        });
-        
-        // Hide done button when input is cleared
-        input.addEventListener('input', () => {
-            if (!input.value.trim()) {
-                doneBtn.classList.remove('show');
-            }
-        });
-        
-        // Done button click handler
-        doneBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            input.blur(); // Close datetime picker
-            
-            // Brief success animation
-            doneBtn.innerHTML = '<i class="fas fa-check"></i>';
-            setTimeout(() => {
-                doneBtn.classList.remove('show');
-                doneBtn.innerHTML = '<i class="fas fa-check"></i>';
-            }, 500);
-        });
-        
-        // Initialize if input already has value
-        if (input.value.trim()) {
-            doneBtn.classList.add('show');
-        }
-    });
-}
-
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     addDynamicStyles();
