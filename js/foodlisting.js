@@ -741,7 +741,7 @@ handleFileSelect(file) {
                 contact: "+1 234-567-8901",
                 createdAt: new Date(Date.now() - 1800000),
                 donor: "Sunrise Bakery",
-                dietaryTags: ["diary-free"]
+                dietaryTags: ["dairy-free"]
             },
             {
                 id: 4,
@@ -825,7 +825,7 @@ handleFileSelect(file) {
                 contact: "+1 234-567-8904",
                 createdAt: new Date(Date.now() - 2700000),
                 donor: "Healthy Eats Cafe",
-                dietaryTags: ["non-vegetarian", "diary-free"]
+                dietaryTags: ["non-vegetarian", "dairy-free"]
             }
         ];
         
@@ -863,23 +863,32 @@ handleFileSelect(file) {
     createClaimButton(listing) {
         const isClaimed = this.claimedItems.includes(listing.id);
         const isCollector = this.currentRole === 'collector';
-        
-        if (isClaimed) {
+        const username = JSON.parse(localStorage.getItem('user'))?.name;
+
+        if(username) {
+            if (isClaimed) {
             return `
                 <button class="claim-btn claimed" disabled>
                     <i class="fas fa-check-circle"></i> Claimed
                 </button>
             `;
-        } else if (isCollector) {
-            return `
-                <button class="claim-btn" data-id="${listing.id}">
-                    <i class="fas fa-hand-paper"></i> Claim Food
-                </button>
-            `;
+            } else if (isCollector) {
+                return `
+                    <button class="claim-btn" data-id="${listing.id}">
+                        <i class="fas fa-hand-paper"></i> Claim Food
+                    </button>
+                `;
+            } else {
+                return `
+                    <button class="claim-btn" style="opacity: 0.5; cursor: not-allowed;" disabled>
+                        <i class="fas fa-hand-paper"></i> Switch to Collector
+                    </button>
+                `;
+            }
         } else {
             return `
                 <button class="claim-btn" style="opacity: 0.5; cursor: not-allowed;" disabled>
-                    <i class="fas fa-hand-paper"></i> Switch to Collector
+                    <i class="fas fa-hand-paper"></i> Login to Claim
                 </button>
             `;
         }

@@ -333,11 +333,17 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="freshUntil">Fresh Until *</label>
-                <input type="datetime-local" id="freshUntil" required />
+                <div class="input-container-relative">
+                  <input type="datetime-local" id="freshUntil" class="datetime-input" required />
+                  <span class="checkmark-icon hidden">✓</span>
+                </div>
               </div>
               <div class="form-group">
                 <label for="pickupTime">Preferred Pickup Time *</label>
-                <input type="time" id="pickupTime" required />
+                <div class="input-container-relative">
+                  <input type="time" id="pickupTime" class="datetime-input" required />
+                  <span class="checkmark-icon-time hidden">✓</span>
+                </div>
               </div>
             </div>
             <div class="form-group">
@@ -959,7 +965,7 @@
             <h4>For Donors</h4>
             <ul>
               <li><a href="foodlisting.html">List Food</a></li>
-              <li><a href="#">Donor Guidelines</a></li>
+              <li><a href="donor-guidelines.html">Donor Guidelines</a></li>
               <li><a href="#">Track Impact</a></li>
               <li><a href="support.html">Support</a></li>
             </ul>
@@ -970,7 +976,7 @@
             <ul>
               <li><a href="#">Find Food</a></li>
               <li><a href="ngo-register.html">Register NGO</a></li>
-              <li><a href="#">Volunteer</a></li>
+              <li><a href="vounteer_food.html">Volunteer</a></li>
               <li><a href="#">Resources</a></li>
             </ul>
           </div>
