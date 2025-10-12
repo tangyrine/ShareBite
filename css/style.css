@@ -66,41 +66,6 @@ body {
     padding: var(--container-padding);
 }
 
-/* Base Navbar Styles */
-/* Navbar Base */
-    /* ---------- CSS Variables ---------- */
-    :root {
-      --bg-color: #ffffff;
-      --text-color: #333333;
-      --primary-color: #ff6347;
-      --btn-bg: #ff6347;
-      --btn-hover: #e04a30;
-      --shadow-color: rgba(0,0,0,0.1);
-    }
-
-    body.dark {
-      --bg-color: #1a1a1a;
-      --text-color: #f0f0f0;
-      --primary-color: #ff6347;
-      --btn-bg: #ff6347;
-      --btn-hover: #e04a30;
-      --shadow-color: rgba(255,255,255,0.1);
-    }
-
-    /* ---------- Base Styles ---------- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: "Poppins", sans-serif;
-      background: var(--bg-color);
-      color: var(--text-color);
-      transition: all 0.3s ease;
-    }
-
     /* ---------- Navbar ---------- */
     .navbar {
       width: 100%;
@@ -160,7 +125,7 @@ body {
     .role-switch,
     .theme-toggle {
       border: none;
-      background: var(--btn-bg);
+      background: var(--primary-color);
       color: #fff;
       padding: 0.5rem 0.9rem;
       border-radius: 8px;
@@ -172,7 +137,7 @@ body {
     .login-btn:hover,
     .role-switch:hover,
     .theme-toggle:hover {
-      background: var(--btn-hover);
+      background: var(--primary-dark);
     }
 
     /* Hamburger */
@@ -192,7 +157,7 @@ body {
     .hamburger span {
       height: 3px;
       width: 100%;
-      background: var(--text-color);
+      background: grey;
       border-radius: 5px;
       transition: all 0.3s;
     }
