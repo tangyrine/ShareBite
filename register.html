@@ -313,8 +313,8 @@
             pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$"
           />
         </div>
-        <div class="form-group">          
-          <label for="password">Password</label>        
+        <div class="form-group">
+          <label for="password">Password</label>
           <input
             type="password"
             id="password"
@@ -400,7 +400,6 @@
         >Already have a User account? Login</a
       >
     </div>
-    </body>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/theme.js"></script>
     <script>
@@ -503,16 +502,16 @@
         return re.test(email);
         }
 
-emailInput.addEventListener('blur', function () {
-  if (!emailInput.value || validateEmail(emailInput.value)) {
-    emailError.style.display = 'none';
-    emailInput.style.borderColor = 'var(--input-border-light)';
-  } else {
-    emailError.textContent = 'Please enter a valid email address.';
-    emailError.style.display = 'block';
-    emailInput.style.borderColor = 'var(--secondary-orange)';
-  }
-});
+        emailInput.addEventListener('blur', function () {
+          if (!emailInput.value || validateEmail(emailInput.value)) {
+            emailError.style.display = 'none';
+            emailInput.style.borderColor = 'var(--input-border-light)';
+          } else {
+            emailError.textContent = 'Please enter a valid email address.';
+            emailError.style.display = 'block';
+            emailInput.style.borderColor = 'var(--secondary-orange)';
+          }
+        });
 
         if (!fullName || !email || !password || !role) {
           alert("Please fill in all fields before registering.");
@@ -524,12 +523,6 @@ emailInput.addEventListener('blur', function () {
           alert("Passwords do not match. Please re-enter.");
           return;
         }
-      if (response.ok) {
-        // Store user data locally (optional)
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ name, email, role })
-        );
 
         if (!fullName || !email || !password || !role) {
           Swal.fire({
@@ -583,11 +576,6 @@ emailInput.addEventListener('blur', function () {
           window.location.href = "index.html";
         }, 1500); // wait for the Swal to close
       });
- 
-        window.location.href = "index.html";
-      } else {
-        const errorData = await response.json();
-        alert("Registration failed: " + (errorData.message || "Unknown error"));
 
       const password = document.getElementById("password");
       const show_pwd = document.getElementById("show-pwd");
@@ -598,10 +586,7 @@ emailInput.addEventListener('blur', function () {
           password.type = "password";
         }
       }
-    } catch (error) {
-      console.error(error);
-      alert("Error connecting to server");
-    }
-  });
-</script>
+      show_pwd.addEventListener("change", passwordToggle);
+    </script>
+  </body>
 </html>
