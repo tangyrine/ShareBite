@@ -6,6 +6,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const ngoAuthRoutes = require('./routes/ngoAuthRoutes');
+const foodListingRoutes = require('./routes/foodListingRoutes');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 // TODO: Add your routes here
 app.use('/api/auth', authRoutes);
 app.use('/api/ngo', ngoAuthRoutes);
+app.use('/api/food', foodListingRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

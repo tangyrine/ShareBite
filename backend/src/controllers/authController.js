@@ -7,7 +7,7 @@ const generateToken = (userId) => {
   if (!secret) {
     throw new Error('JWT_SECRET is not set');
   }
-  return jwt.sign({ id: userId }, secret, { expiresIn: '7d' });
+  return jwt.sign({ id: userId, role: 'user' }, secret, { expiresIn: '7d' });
 };
 
 exports.register = async (req, res) => {
