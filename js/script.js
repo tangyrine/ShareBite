@@ -2,6 +2,7 @@
 
 class ShareBite {
     constructor() {
+        this.contactEmail = 'sharebite@support.com.ng';
         this.currentRole = 'donor';
         this.foodListings = [];
         this.filteredListings = [];
@@ -15,12 +16,26 @@ class ShareBite {
 
     init() {
         this.setupEventListeners();
+        this.updateContactInfo();
         this.generateSampleListings();
         this.renderFoodListings();
         this.setupNotificationSystem();
         this.updateNotificationDisplay();
         this.startAnimations();
         this.hideLoadingOverlay();
+    }
+
+    updateContactInfo() {
+        const emailAddressElement = document.getElementById('contact-email-address');
+        const emailLinkElement = document.getElementById('contact-email-link');
+
+        if (emailAddressElement) {
+            emailAddressElement.textContent = this.contactEmail;
+        }
+
+        if (emailLinkElement) {
+            emailLinkElement.href = `mailto:${this.contactEmail}`;
+        }
     }
 
     initTheme() {
