@@ -403,6 +403,7 @@
     </div>
 
     <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
     <script>
         // --- Password Strength Meter ---
       const pwdInput = document.getElementById("password");
@@ -586,41 +587,54 @@
             }
             
             // Type-specific validation and data collection
-            let successMessage = "";
             if (type === 'ngo') {
                 const ngoName = registerForm.ngoName.value.trim();
+                const contactPerson = registerForm.contactPerson.value.trim();
                 if (!ngoName) {
                     alert("NGO Name is required for NGO registration.");
                     return;
                 }
-                const website = registerForm.website.value.trim();
-                const description = registerForm.description.value.trim();
                 
-                // Log NGO data (replace with actual API call)
-                console.log({ type, ngoName, email, phone, address, website, description });
-                successMessage = "NGO Registered successfully! (Frontend only)";
+                // Call backend API for NGO
+                registerNGO({
+                    name: ngoName,
+                    email: email,
+                    password: password,
+                    phone: phone,
+                    address: address,
+                    nickname: contactPerson,
+                    availability: ''
+                }).then(response => {
+                    localStorage.setItem('sharebite_token', response.token);
+                    sharebiteAuth.login({ ...response.ngo, type: 'ngo' });
+                    alert("NGO Registered successfully!");
+                    setTimeout(() => window.location.href = "index.html", 500);
+                }).catch(error => {
+                    alert(error.message || "Registration failed. Please try again.");
+                });
                 
             } else if (type === 'volunteer') {
                 const fullName = registerForm.fullName.value.trim();
-                 if (!fullName) {
+                const availability = registerForm.availability.value.trim();
+                if (!fullName) {
                     alert("Full Name is required for Volunteer registration.");
                     return;
                 }
-                const availability = registerForm.availability.value.trim();
                 
-                // Log Volunteer data (replace with actual API call)
-                console.log({ type, fullName, email, phone, address, availability });
-                successMessage = "Volunteer Registered successfully! (Frontend only)";
+                // Call backend API for Volunteer (User)
+                registerUser({
+                    name: fullName,
+                    email: email,
+                    password: password
+                }).then(response => {
+                    localStorage.setItem('sharebite_token', response.token);
+                    sharebiteAuth.login(response.user);
+                    alert("Volunteer Registered successfully!");
+                    setTimeout(() => window.location.href = "index.html", 500);
+                }).catch(error => {
+                    alert(error.message || "Registration failed. Please try again.");
+                });
             }
-
-
-            alert(successMessage);
-
-
-            setTimeout(() => {
-                // For a real app, you would redirect to a dashboard or thank you page
-                window.location.href = "index.html";
-            }, 500);
         });
         
         // Ensure initial state is correctly set (it's 'ngo' by default but good practice)

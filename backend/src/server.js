@@ -14,9 +14,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to DB
-connectDB();
-
 // Example route
 app.get('/', (req, res) => {
   res.send('API is running');
@@ -28,6 +25,14 @@ app.use('/api/ngo', ngoAuthRoutes);
 app.use('/api/food', foodListingRoutes);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+
+// Start server first
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+}).on('error', (err) => {
+  console.error('❌ Server error:', err);
+  process.exit(1);
 });
+
+// Connect to DB after server starts
+connectDB();
