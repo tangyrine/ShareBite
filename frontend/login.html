@@ -361,6 +361,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script>
       // --- Password Visibility Toggle ---
@@ -404,54 +405,43 @@
           return;
         }
 
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        const emailInput = document.getElementById("email").value;
-        const passwordInput = document.getElementById("password").value;
+        try {
+          // Call backend API
+          const response = await loginUser({ email, password });
+          
+          // Store token and user data
+          localStorage.setItem('sharebite_token', response.token);
+          
+          // Use the auth system to log in
+          sharebiteAuth.login(response.user);
 
-        // Hash entered password
-        const encoder = new TextEncoder();
-        const data = encoder.encode(passwordInput);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashedPassword = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+          // Success message
+          Swal.fire({
+            title: "Login Successful 🎉",
+            text: "You have logged in successfully!",
+            icon: "success",
+            confirmButtonColor: "#28a745",
+            background: "#f0fff4",
+            color: "#333",
+            timer: 1500,
+            showConfirmButton: false,
+          });
 
-        if (!storedUser) {
-            alert("No user registered on this browser.");
-        } else if (storedUser.email === emailInput && storedUser.password === hashedPassword) {
-            // Success message
-            Swal.fire({
-              title: "Login Successful 🎉",
-              text: "You have logged in successfully!",
-              icon: "success",
-              confirmButtonColor: "#28a745",
-              background: "#f0fff4",
-              color: "#333",
-              timer: 1500,
-              showConfirmButton: false,
-            });
-
-            // Redirect after short delay 
-            setTimeout(() => {
-              window.location.href = "index.html";
-            }, 1500); // 1.5 second delay
-        } else {
-            Swal.fire({
-              title: "No credentials found ❌",
-              text: "Please enter correct credentials or register if you don't have an account.",
-              icon: "warning",
-              confirmButtonColor: "#FF6B35",
-              background: "#fff8f0",
-              color: "#333",
-            });
-            return;
+          // Redirect after short delay 
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1500);
+        } catch (error) {
+          Swal.fire({
+            title: "Login Failed ❌",
+            text: error.message || "Invalid credentials. Please try again.",
+            icon: "error",
+            confirmButtonColor: "#FF6B35",
+            background: "#fff8f0",
+            color: "#333",
+          });
         }
       }));
-
-        // Redirect to index.html after short delay (so alert can be seen)
-        setTimeout(() => {
-            window.location.href = "index.html";
-        }, 500); // 0.5 second delay
-    });
     </script>
   </body>
 </html>
