@@ -6,11 +6,45 @@
   <title>Volunteer Food | ShareBite</title>
   <link rel="icon" type="image/png" href="favicon.png" />
 
-  <!-- Google Fonts -->
+<!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <!-- CSS -->
+<!-- CSS -->
   <style>
+    :root {
+        --primary-color: #4CAF50;
+        --primary-light: #81C784;
+        --secondary-color: #FF6B35;
+        --white: #FFFFFF;
+        --light-navbar: #eeeff4;
+        --gray: #F5F7FA;
+        --medium-gray: #9E9E9E;
+        --black: #212121;
+        --primary-gradient: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        --card-radius: 16px;
+        --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+        --shadow-medium: 0 5px 25px rgba(0, 0, 0, 0.15);
+        --shadow-heavy: 0 10px 40px rgba(0, 0, 0, 0.2); /* Key for form shadow */
+        --transition-fast: 0.2s ease;
+        --transition-medium: 0.3s ease;
+    }
+    
+    /* Dark Mode Variables Overrides  */
+    :root.dark {
+        --body-bg-dark: #0f172a;
+        --text-color-dark: #f8fafc;
+        --footer-bg-dark: #0d0d0d;
+        --light-gray: #1E1E1E;
+        --medium-gray: #B0B0B0;
+        --dark-gray: #E0E0E0;
+        --black: #FAFAFA;
+        --card-bg: #2E2E2E;
+        --darkest-gray: #121212;
+        --shadow-heavy: 0 10px 40px rgba(0, 0, 0, 0.6); /* Dark mode shadow adjustment */
+    }
+
+    /* Base Styles */
     * {
       margin: 0;
       padding: 0;
@@ -19,17 +53,31 @@
     }
 
     body {
-      background: #0f172a;
-      color: #f8fafc;
+      background: var(--light-gray);
+      color: var(--white);
       line-height: 1.6;
       transition: 0.3s;
     }
 
     a { text-decoration: none; }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    .contact-wrapper {
+    background: var(--darkest-gray);
+    padding: 3rem;
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-heavy);
+    max-width: 1200px;
+    width: 100%;
+    }
 
-    /* Navbar */
+/* -- Navbar-- */
     .navbar {
-      background: #111827;
+      background: var(--footer-bg-dark);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -44,29 +92,29 @@
       gap: 8px;
       font-size: 1.4rem;
       font-weight: 700;
-      color: #22c55e;
+      color: var(--primary-color);
     }
     .nav-links {
       display: flex;
       gap: 1.5rem;
     }
     .nav-links a {
-      color: #f8fafc;
+      color: var(--white);
       font-weight: 500;
       transition: 0.3s;
     }
     .nav-links a:hover {
-      color: #22c55e;
+      color: var(--primary-color);
     }
     .btn-nav {
-      background: #22c55e;
-      color: #fff;
+      background: var(--primary-color);
+      color: var(--white);
       padding: 0.5rem 1rem;
       border-radius: 8px;
       font-weight: 600;
     }
 
-    /* Dark Mode Button */
+/* -- Dark Mode Button -- */
     .dark-toggle {
       margin-left: 1rem;
       padding: 0.4rem 0.8rem;
@@ -74,15 +122,15 @@
       border: none;
       cursor: pointer;
       font-weight: 600;
-      background: #f97316;
-      color: #fff;
+      background: var(--secondary-color);
+      color: var(--white);
       transition: 0.3s;
     }
     .dark-toggle:hover {
-      background: #ea580c;
+      background: var(--secondary-dark);
     }
 
-    /* Hero */
+/*-- Hero --*/
     .hero {
       text-align: center;
       padding: 4rem 2rem;
@@ -95,16 +143,16 @@
       font-weight: 700;
     }
     .hero span {
-      color: #f97316;
+      color: var(--secondary-color);
     }
     .hero p {
       margin-bottom: 2rem;
-      color: #cbd5e1;
+      color: var(--white);
       font-size: 1.1rem;
     }
     .btn-primary {
-      background: #f97316;
-      color: #fff;
+      background: var(--secondary-color);
+      color: var(--white);
       padding: 0.8rem 1.5rem;
       border-radius: 10px;
       font-weight: 600;
@@ -112,8 +160,8 @@
       display: inline-block;
     }
     .btn-outline {
-      border: 2px solid #f97316;
-      color: #f97316;
+      border: 2px solid var(--secondary-color);
+      color: var(--secondary-color);
       padding: 0.8rem 1.5rem;
       border-radius: 10px;
       font-weight: 600;
@@ -121,11 +169,11 @@
       display: inline-block;
     }
     .btn-outline:hover {
-      background: #f97316;
-      color: #fff;
+      background: var(--secondary-color);
+      color: var(--white);
     }
 
-    /* Info Section */
+/* -- Info Section -- */
     .info {
       padding: 3rem 2rem;
       text-align: center;
@@ -142,7 +190,7 @@
       gap: 1.5rem;
     }
     .card {
-      background: #1e293b;
+      background: var(--card-bg);
       padding: 2rem;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -152,110 +200,147 @@
       transform: translateY(-5px);
     }
     .card h3 {
-      color: #22c55e;
+      color: var(--primary-color);
       margin-bottom: 1rem;
     }
 
-    /* Volunteer Form */
+    /* --- Volunteer Form  --- */
     .form-section {
-      padding: 3rem 2rem;
-      background: #111827;
-      border-radius: 20px;
+      padding: 3rem 3rem; 
+      background: var(--white);
+      border-radius: 1.5rem; 
+      box-shadow: var(--shadow-heavy); 
       max-width: 700px;
       margin: 3rem auto;
+      color: var(--black); 
     }
     .form-section h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
       text-align: center;
+      background: var(--primary-gradient);
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin-bottom: 2rem;
     }
-    form {
+    .form-section form {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.2rem; 
     }
-    label {
+    .form-section label {
       text-align: left;
       font-weight: 600;
+      color: var(--black);
+      margin-bottom: 0.5rem;
     }
-    input, select {
-      padding: 0.8rem;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      background: #1e293b;
-      color: #fff;
-    }
-    input:focus, select:focus {
-      border: 2px solid #22c55e;
-    }
-    button {
-      background: #22c55e;
-      color: #fff;
-      padding: 0.9rem;
-      border-radius: 10px;
+    .form-section input, 
+    .form-section select {
+      padding: 0.9rem 1rem;
+      border-radius: 0.6rem;
+      border: 1.5px solid var(--medium-gray);
       font-size: 1rem;
+      color: var(--black);
+      background: var(--light-gray);
+      transition: 0.3s ease;
+    }
+    .form-section button[type="submit"] {
+      background: var(--primary-gradient);
+      color: var(--white);
       font-weight: 600;
+      font-size: 1.1rem;
+      padding: 0.9rem 0;
       border: none;
+      border-radius: 0.6rem;
       cursor: pointer;
+      transition: all 0.3s ease;
       margin-top: 1rem;
     }
-    button:hover {
-      background: #16a34a;
+    .form-section button[type="submit"]:hover {
+      transform: translateY(-2px);
     }
 
-    /* Footer */
-    .footer {
-      background: #111827;
-      text-align: center;
-      padding: 1.5rem;
-      margin-top: 3rem;
-      color: #cbd5e1;
+/* Footer bottom section */
+.footer-bottom {
+    background: var(--footer-bg-dark);
+    padding-top: 2rem;
+    text-align: center;
+    color: var(--medium-gray);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0 auto;
+}
+
+/* Ensure the "Made with ❤️ by Angela Bera" is bold and green */
+    .footer-bottom .footer-credit,
+    .footer-bottom .footer-credit a {
+        color: var(--primary-color);
+        font-weight: bold;
     }
 
-    /* Light Mode Overrides */
+/* Light Mode Overrides */
     .light-mode {
-      background: #f8fafc;
-      color: #0f172a;
+      background: var(--white);
+      color: var(--darkest-gray);
     }
     .light-mode .navbar {
-      background: #e2e8f0;
+      background: var(--light-navbar);
     }
     .light-mode .nav-links a {
-      color: #0f172a;
+      color: var(--black);
     }
     .light-mode .hero p {
-      color: #475569;
+      color: var(--darkest-gray);
     }
     .light-mode .card {
-      background: #f1f5f9;
-      color: #0f172a;
+        background: var(--gray)
     }
-    .light-mode input, 
-    .light-mode select {
-      background: #f1f5f9;
-      color: #0f172a;
+
+    .light-mode .contact-wrapper {
+        background: var(--white);
     }
+    .light-mode .footer-bottom {
+        background: var(--black);
+    }
+
+/* Light mode form section adjustment */
     .light-mode .form-section {
-      background: #e2e8f0;
-      color: #0f172a;
+      background: var(--white); 
+      color: var(--black);
     }
-    .light-mode .footer {
-      background: #e2e8f0;
-      color: #0f172a;
+    .light-mode .form-section input, 
+    .light-mode .form-section select {
+      background: var(--light-gray); 
+      color: var(--black);
+    }
+    .light-mode .form-section label {
+        color: var(--black);
+    }
+
+/* Dark Mode Overrides for Form Section */
+    :root.dark .form-section {
+        background: var(--darkest-gray); 
+        color: var(--black);
     }
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
+    <!-- Navbar -->
   <nav class="navbar">
-    <div class="logo">🍴 ShareBite</div>
+    <div class="logo">
+      <i class="fas fa-utensils"></i>
+      <span>ShareBite</span>
+    </div>
     <div class="nav-links">
       <a href="index.html">Home</a>
-      <a href="../index.html#features">Features</a>
+      <a href="index.html#features">Features</a>
       <a href="foodlisting.html">Listings</a>
-      <a href="../index.html#about">About</a>
-      <a href="../index.html#contact">Contact</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#contact-section">Contact</a>
     </div>
     <div>
       <a href="donor.html" class="btn-nav">Become a Donor</a>
@@ -271,7 +356,7 @@
     <a href="#info" class="btn-outline">Learn More</a>
   </section>
 
-  <!-- Info Section -->
+   <!-- Info Section -->
   <section class="info" id="info">
     <h2>Why Volunteer with Us?</h2>
     <div class="card-grid">
@@ -281,7 +366,7 @@
       </div>
       <div class="card">
         <h3>📅 Flexible Schedule</h3>
-        <p>Choose volunteering times that fit your lifestyle — weekends, weekdays, or both.</p>
+        <p>Choose volunteering times that fit your lifestyle - weekends, weekdays, or both.</p>
       </div>
       <div class="card">
         <h3>🌍 Network & Growth</h3>
@@ -290,17 +375,18 @@
     </div>
   </section>
 
-  <!-- Volunteer Form -->
+    <!-- Volunteer Form -->
   <section class="form-section" id="signup">
-    <h2>Volunteer Sign Up</h2>
+    <div class="contact-wrapper">
+    <h2> Volunteer Sign Up</h2>
     <form onsubmit="return handleForm(event)">
-      <label for="name">Full Name</label>
-      <input type="text" id="name" placeholder="Enter your name" required>
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" placeholder="Enter your full name" required>
 
-      <label for="email">Email Address</label>
+      <label for="email">Email Address:</label>
       <input type="email" id="email" placeholder="Enter your email" required>
 
-      <label for="phone">Phone Number</label>
+      <label for="phone">Phone Number:</label>
       <input type="tel" id="phone" placeholder="Enter your phone number" required>
 
       <label for="availability">Availability</label>
@@ -313,33 +399,54 @@
 
       <button type="submit">Submit</button>
     </form>
-  </section>
+    </div>
+</section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p>&copy; 2025 ShareBite. All Rights Reserved.</p>
-  </footer>
+    <!-- Footer Bottom -->
+    <footer>
+        <div class="footer-bottom">
+          <p class="footer-credit">Made with 💚 by Angela Bera</p>
+          <p>
+            &copy; 2025 ShareBite. All rights reserved. License
+          </p>
+          <p></p>
+        </div>
+    </footer>
 
-  <!-- JavaScript -->
+<!-- JavaScript -->
   <script>
     function handleForm(event) {
       event.preventDefault();
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
-      alert("Thank you, " + name + "! We’ll contact you at " + email + " soon.");
+      alert("✅ Thank you, " + name + "! We’ll contact you at " + email + " soon.");
       event.target.reset();
       return false;
     }
 
     function toggleDarkMode() {
-      document.body.classList.toggle("light-mode");
+      const isLightMode = document.body.classList.toggle("light-mode");
       const btn = document.querySelector(".dark-toggle");
-      if (document.body.classList.contains("light-mode")) {
+      
+      if (isLightMode) {
         btn.textContent = "🌞";
+        document.documentElement.classList.remove('dark');
       } else {
         btn.textContent = "🌙";
+        document.documentElement.classList.add('dark');
       }
     }
+    
+    // Initialize dark mode check on load
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!document.body.classList.contains("light-mode")) {
+            document.documentElement.classList.add('dark');
+            document.querySelector(".dark-toggle").textContent = "🌙";
+        } else {
+            document.querySelector(".dark-toggle").textContent = "🌞";
+            document.documentElement.classList.remove('dark');
+        }
+    });
   </script>
 </body>
 </html>
