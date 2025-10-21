@@ -510,23 +510,56 @@ body.dark .profile-menu-item:hover {
             gap: 0.5rem;
         }
 
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
         .login-btn {
-            background: var(--primary-color);
-            color: white;
+            position: relative;
+            overflow: hidden;
+            padding: 10px 26px; /* smaller padding */
+            font-size: 1rem; /* smaller text */
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
             border: none;
-            padding: 0.7rem 1.3rem;
-            border-radius: 8px;
             cursor: pointer;
-            font-weight: 500;
-            transition: var(--transition);
-            white-space: nowrap;
+            border-radius: 40px;
+            letter-spacing: 0.5px;
+            background: linear-gradient(90deg, #3b82f6, #9333ea, #f43f5e);
+            background-size: 300%;
+            transition: background-position 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
+            z-index: 1;
         }
 
         .login-btn:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            background-position: right;
+            box-shadow: 0 0 12px rgba(147, 51, 234, 0.8),0 0 25px rgba(59, 130, 246, 0.6);
+            transform: scale(1.07);
         }
+
+        .login-btn::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(0);
+            border-radius: inherit;
+            transition: transform 0.4s ease;
+            z-index: 0;
+        }
+
+        .login-btn:hover::before {
+            transform: scale(2.5);
+        }
+
+        .login-btn:active {
+            animation: pulse 0.4s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.8); }
+            70% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        
 
         .hamburger {
             display: none;
@@ -829,22 +862,6 @@ body.dark .profile-menu-item:hover {
 }
 
 .role-switch:focus-visible { outline: 3px solid rgba(255,255,255,0.6); outline-offset: 2px; }
-
-.login-btn {
-    background: var(--primary-gradient);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-weight: 600;
-    transition: var(--transition-medium);
-}
-
-.login-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-medium);
-}
 
 /* Profile Dropdown Styles */
 .user-profile {
