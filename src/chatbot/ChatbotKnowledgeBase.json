@@ -31,7 +31,7 @@
       "id": "system_steps",
       "question": "How the system works",
       "keywords": ["how it works", "how the system works", "steps", "process", "workflow"],
-      "answer": "⚙️ It's a simple 3-step process:\n\nStep 1:Food 🍲 List Your FoodFood — Add fresh food details and location.\nStep 2:Food 🤝 Connect & CoordinateFood — NGOs and volunteers get notified and arrange pickups.\nStep 3:Food 💚 Feed CommunitiesFood — The food reaches people who need it most.\n\nTogether, we save meals and reduce waste!"
+      "answer": "⚙️ It's a simple 3-step process:\n\nStep 1: 🍲 List Your Food — Add fresh food details and location.\nStep 2: 🤝 Connect & Coordinate — NGOs and volunteers get notified and arrange pickups.\nStep 3: 💚 Feed Communities — The food reaches people who need it most.\n\nTogether, we save meals and reduce waste!"
     },
     {
       "id": "ngo_partnerships",
