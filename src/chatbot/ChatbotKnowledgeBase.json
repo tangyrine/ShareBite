@@ -73,7 +73,7 @@
       "id": "features",
       "question": "What are your features?",
       "keywords": ["features", "what features", "capabilities", "what can you do", "functionality"],
-      "answer": "✨ ShareBite Features:Food\n- 🏷️ Dual user roles: Donor & Collector\n- 🧭 Food listings with real-time filters\n- 📱 Responsive design for all devices\n- 🔔 Smart notifications for new food\n- 💬 Easy coordination between donors & NGOs\n- 📊 Impact statistics and community stories"
+      "answer": "✨ ShareBite Features\n- 🏷️ Dual user roles: Donor & Collector\n- 🧭 Food listings with real-time filters\n- 📱 Responsive design for all devices\n- 🔔 Smart notifications for new food\n- 💬 Easy coordination between donors & NGOs\n- 📊 Impact statistics and community stories"
     },
     {
       "id": "see_listings",
