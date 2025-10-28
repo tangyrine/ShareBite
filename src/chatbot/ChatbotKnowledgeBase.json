@@ -82,5 +82,5 @@
       "answer": "🍛 You can explore all available food donations on the Food ListingsFood page.\nThere, you'll find items like Fresh PizzaFood, Bread & PastriesFood, and Home-cooked MealsFood — ready to be claimed by NGOs or volunteers.\n\n🕓 Listings include freshness time, pickup details, and dietary filters. <a href=\"foodlisting.html\" target=\"_blank\" style=\"color:#2E7D32;font-weight:500;\">Click here to view listings</a>."
     }
   ],
-  "fallback": "🤔 That's a great question! I'm still learning every day. You can explore the AboutFood, ContactFood, or FeaturesFood pages for more details — or ask me about donating, finding food, or joining as an NGO. 🌍"
+  "fallback": "🤔 That's a great question! I'm still learning every day. You can explore the About, Contact, or Features pages for more details — or ask me about donating, finding food, or joining as an NGO. 🌍"
 }
