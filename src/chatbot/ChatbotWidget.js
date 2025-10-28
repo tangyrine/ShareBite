@@ -15,7 +15,7 @@
   const kbUrl = new URL("./ChatbotKnowledgeBase.json", import.meta.url);
   let KB = null;
   try {
-    const res = await fetch(kbUrl.href, { cache: "no-store" });
+    const res = await fetch(kbUrl.href, { cache: "default" });
     KB = await res.json();
   } catch (e) {
     console.error("ShareBot: failed to load knowledge base", e);
